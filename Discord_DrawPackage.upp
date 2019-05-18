@@ -1,0 +1,14 @@
+description "\377BI113,255,200";
+
+uses
+	Core,
+	Draw,
+	CtrlLib;
+
+file
+	Discord_DrawPackage.h,
+	Discord_DrawPackage.cpp;
+
+mainconfig
+	"" = "";
+
