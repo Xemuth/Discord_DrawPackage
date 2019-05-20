@@ -7,22 +7,20 @@ using namespace Upp;
 
 void Discord_DrawPackage::drawTest(ValueMap payload){
 	String channel  = payload["d"]["channel_id"];
-    String userName = payload["d"]["author"]["username"];
     String id = payload["d"]["author"]["id"];
-    String discriminator = payload["d"]["author"]["discriminator"];
 	Upp::String message = payload["d"]["content"];
 	message.Replace(String("!" +prefix +" "),"");
 	Cout() <<message <<"\n";
 	Vector<String> args = Split(message," ");
-	if(message.GetCount() > 0 && args.GetCount() > 1 && isStringisANumber(args[0]) && isStringisANumber(args[1]) ){
+	if( args.GetCount() > 2 &&  args[0].Compare("draw")==0 && isStringisANumber(args[1]) && isStringisANumber(args[2]) ){
 		try{
-			args[0].Replace("+","");
 			args[1].Replace("+","");
-			float x =std::stof( args[0].ToStd());
-			float y = std::stof(args[1].ToStd());
+			args[2].Replace("+","");
+			float x =std::stof( args[1].ToStd());
+			float y = std::stof(args[2].ToStd());
 			String toDraw="";
-			if(args.GetCount()>2){
-				for(int i = 2; i < args.GetCount(); i++){
+			if(args.GetCount()>3){
+				for(int i = 3; i < args.GetCount(); i++){
 					toDraw << ((i !=2)? " ":"" ) + args[i];
 				}
 			}else{
@@ -31,7 +29,7 @@ void Discord_DrawPackage::drawTest(ValueMap payload){
 			
 			ImageDraw w(x,  y );
 			w.DrawRect(0, 0, x, y, SWhite());
-			w.DrawText( (x*0.2), (y*0.2) , 320*10 ,toDraw,Roman(((x)+(y))/toDraw.GetCount() )); // il faut adapter la taille du text par rapport à la taille de l'image et à la longueur de celui-ci
+			w.DrawText( (x*0.2), (y*0.2) , 320*10 ,toDraw,Roman((((((x)+(y))/2) )/(toDraw.GetCount() * 0.8) ))); // il faut adapter la taille du text par rapport à la taille de l'image et à la longueur de celui-ci
 		
 			PNGEncoder png;
 		    Image m = w;
@@ -42,10 +40,42 @@ void Discord_DrawPackage::drawTest(ValueMap payload){
 		catch(...){
 			ptrBot->CreateMessage(channel, "Erreur d'argument !");
 		}
-	}else{
-		ptrBot->CreateMessage(channel, "Erreur d'argument !");
 	}
 }
+
+void Discord_DrawPackage::DrawGraph(ValueMap payload){
+	String channel  = payload["d"]["channel_id"];
+	Upp::String message = payload["d"]["content"];
+	message.Replace(String("!" +prefix +" "),"");
+	Cout() <<message <<"\n";
+	Vector<String> args = Split(message," ");
+	if(args.GetCount() >0 &&  args[0].Compare("graph")==0){
+		float x=  500.0f;
+		float y=  500.0f;
+		ImageDraw w(x,  y );
+		w.DrawRect(0, 0, x, y, SWhite());
+		w.DrawLine((x*0.05),(y*0.05),(x*0.05),(y*0.95),2,SGray());
+		w.DrawLine((x*0.05),(y*0.95),(x*0.95),(y*0.95),2,SGray());
+		
+		String toDraw="";
+		if(args.GetCount()>1){
+		for(int i = 1; i < args.GetCount(); i++){
+			toDraw << ((i !=1)? " ":"" ) + args[i];
+		}
+		}else{
+			toDraw <<  "Test Draw !";
+		}
+		
+		w.DrawText((x/2),(y*0.1),toDraw,StdFont(20),SGray());
+		PNGEncoder png;
+	    Image m = w;
+	    png.SaveFile("temp.png", m);
+		ptrBot->CreateMessage(channel, "Event " + name  );
+		ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
+	}
+	
+}
+
 bool Discord_DrawPackage::isStringisANumber(Upp::String stringNumber){
 	if (std::isdigit(stringNumber[0]) || (stringNumber.GetCount() > 1 && (stringNumber[0] == '+')))
     {
@@ -62,11 +92,12 @@ Discord_DrawPackage::Discord_DrawPackage(Upp::String _name, Upp::String _prefix)
 	name = _name;
 	prefix = _prefix;
 
-	Events.Add([&](ValueMap e){this->drawTest(e);});
+	EventsMap.Add([&](ValueMap e){this->drawTest(e);});
+	EventsMap.Add([&](ValueMap e){this->DrawGraph(e);});
 }
 
-void Discord_DrawPackage::Event(ValueMap payload){
-	for(auto &e : Events){
+void Discord_DrawPackage::Events(ValueMap payload){
+	for(auto &e : EventsMap){
 		e(payload);
 	}
 }

@@ -7,13 +7,14 @@ class Discord_DrawPackage: public DiscordModule{
 	private:
 	
 		void drawTest(ValueMap payload);
+		void DrawGraph(ValueMap payload);
 		
 		bool isStringisANumber(Upp::String stringNumber);
 	public:
 		
 		Discord_DrawPackage(Upp::String _name, Upp::String _prefix);
 		
-		void Event(ValueMap payload);
+		void Events(ValueMap payload);
 	
 	
 };
