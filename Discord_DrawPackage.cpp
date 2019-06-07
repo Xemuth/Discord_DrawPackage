@@ -47,7 +47,7 @@ void Discord_DrawPackage::DrawGraph(ValueMap payload){
 	String channel  = payload["d"]["channel_id"];
 	Upp::String message = payload["d"]["content"];
 	message.Replace(String("!" +prefix +" "),"");
-	Cout() <<message <<"\n";
+	Cout() << message <<"\n";
 	Vector<String> args = Split(message," ");
 	if(args.GetCount() >0 &&  args[0].Compare("graph")==0){
 		float x=  500.0f;
@@ -73,8 +73,34 @@ void Discord_DrawPackage::DrawGraph(ValueMap payload){
 		ptrBot->CreateMessage(channel, "Event " + name  );
 		ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
 	}
-	
 }
+
+void Discord_DrawPackage::testVraiGraph(ValueMap payload){
+	String channel  = payload["d"]["channel_id"];
+	Upp::String message = payload["d"]["content"];
+	message.Replace(String("!" +prefix +" "),"");
+	Cout() << message <<"\n";
+	Vector<String> args = Split(message," ");
+	if(args.GetCount() >0 &&  args[0].Compare("test")==0){
+		if (FileExists("./example.json")){
+			FileIn in("./example.json");
+			if(in){
+				String e="";
+				in.Seek(0);
+				while(!in.IsEof())
+					e+=in.GetLine();
+				
+			
+				ValueMap data = ParseJSON(e);
+			
+				graphicalImage myGraph(500,500,White());
+				myGraph.drawByValueMap(data);
+				
+			}	
+		}
+	}
+}
+
 
 bool Discord_DrawPackage::isStringisANumber(Upp::String stringNumber){
 	if (std::isdigit(stringNumber[0]) || (stringNumber.GetCount() > 1 && (stringNumber[0] == '+')))
@@ -94,10 +120,43 @@ Discord_DrawPackage::Discord_DrawPackage(Upp::String _name, Upp::String _prefix)
 
 	EventsMap.Add([&](ValueMap e){this->drawTest(e);});
 	EventsMap.Add([&](ValueMap e){this->DrawGraph(e);});
+	EventsMap.Add([&](ValueMap e){this->testVraiGraph(e);});
 }
 
 void Discord_DrawPackage::Events(ValueMap payload){
 	for(auto &e : EventsMap){
 		e(payload);
 	}
+}
+
+//Class Graphical Image
+graphicalImage::graphicalImage(int x,int y, Color background): myGraph(x,y){
+	myGraph.DrawRect(0,0,x,y,background);
+}
+
+ImageDraw& graphicalImage::drawByValueMap(ValueMap theGraph){
+	Definition = theGraph["graphDefinition"];
+	Data =  theGraph[Definition["GraphType"].ToString()];
+	auto numCourbes = Data[String("number" + Definition["GraphType"].ToString()) ];
+	if(numCourbes.ToString().GetCount()>0){
+		int max = std::stoi(numCourbes.ToString().ToStd());
+		for(int e = 0 ;e < max;e++){
+			Cout() << "Courbe numero " << e << " : "  <<Data[String(std::to_string(e))] <<"\n";
+		}
+	}
+
+}
+
+ImageDraw& graphicalImage::removeCourbe(String courbeName){
+	
+}
+ImageDraw& graphicalImage::removeCourbe(int Id){
+	
+}
+
+ImageDraw& graphicalImage::AddCourbe(ValueMap courbeName){
+	
+}
+
+int graphicalImage::getLastId(){
 }
