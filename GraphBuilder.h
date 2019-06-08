@@ -5,7 +5,6 @@
 
 using namespace Upp;
 
-
 class Discord_DrawPackage: public DiscordModule{
 	private:
 		//Events discord
@@ -33,7 +32,14 @@ class Graph{
 		String XName=""; //Name of X axis
 		String YName=""; //Name of Y axis
 		Size sz;
+		
+		bool showAxisNames =true;
+		bool showGraphName =true;
 	public: 
+		virtual String GetInformation() =0; //Here we force Override in inherited class
+											//This func used to print information about the
+											//graph
+	
 		virtual void SetGraphName(Upp::String _GraphName);
 		virtual Upp::String GetGraphName();
 		
@@ -44,23 +50,36 @@ class Graph{
 		virtual void DefineYName(String _YName);
 		virtual String GetXName();
 		virtual String GetYName();
+		
+		virtual void ShowAxisNames(bool b);
+		virtual void ShowGraphName(bool b);
 };
-
-
 
 /***********************************************/
 // Oject used to Represent DotCloud graph 
 /***********************************************/
 class Courbe;
-
+//Not sure if embbed class of Graph into Graph is a good idea
 class GraphDotCloud : Graph{
 	private:
 		const String graphType="DotCloud";
 		
-		Vector<Courbe> AllDots;
+		Vector<Courbe> AllCourbes; 
+		
+		bool showLegendsOfCourbes=false;
+		bool showValueOfDot=true;
+		bool signIt=true; //This one is here for fun. Signing it with my name ! 
+		
 	public:
 		String TypeOfGraph(); //Return type of graph
 		ImageDraw DrawGraph(); //Used to return an ImageDraw representing the graph
+		
+		//Data Manipulation
+		void AddCourbe(Courbe &c);
+		void RemoveCourbe(Courbe &c);
+		void RemoveCourbe(int i);
+		
+		Courbe operator[](int iterator); //allowing to access to courbe stocked in AllCourbes
 		
 		//Bunch of constructor
 		GraphDotCloud(int _XSize,int _YSize);
@@ -69,17 +88,46 @@ class GraphDotCloud : Graph{
 		GraphDotCloud(Size _sz,String _GraphName, String _XName, String _YName);
 		GraphDotCloud(Size _sz,String _GraphName);
 		GraphDotCloud(Size _sz);
-};
+		
+		//params
+		void ShowLegendsOfCourbes(bool b);
+		void ShowValueOfDot(bool b);
+		void SignIt(bool b);
+		
+		class Dot{
+				
+		};
+		 //this class is here to handle Vector of Dot 
+		class Courbe{
+			private :
+				static int objectCount; //Here to know how many Courbe is On while using graph
+				int id; //Here to know Id Of this courbe
+				
+				String name=""; //Name of the courbe
+				Color color=Black(); //Color of the Courbe
+				
+				XValueType ="int"; //Representing of value Type
+				YValueType ="int"; //Representing of value Type
+				
+				Vector<Dot> dots; //All dot
+			protected:
+				bool linkDot = true; //protected to allow mother class to access it
+			public:
+				void LinkDot(bool b);
+		};
+	
 
-class Dot{
 		
 };
+ 
+
 
 /***********************************************/
 // End of Courbe graph
 /***********************************************/
 
-
+Graph* ConstructGraphFromJSON(ValueMap &json); //This is supposed to return graph object from a complete Json
+		
 
 
 #endif
