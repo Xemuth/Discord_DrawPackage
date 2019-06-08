@@ -93,8 +93,8 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 			
 				ValueMap data = ParseJSON(e);
 			
-				graphicalImage myGraph(500,500,White());
-				myGraph.drawByValueMap(data);
+				//graphicalImage myGraph(500,500,White());
+				//myGraph.drawByValueMap(data);
 				
 			}	
 		}
@@ -130,6 +130,7 @@ void Discord_DrawPackage::Events(ValueMap payload){
 }
 
 //Class Graphical Image
+/*
 graphicalImage::graphicalImage(int x,int y, Color background): myGraph(x,y){
 	myGraph.DrawRect(0,0,x,y,background);
 }
@@ -160,3 +161,4 @@ ImageDraw& graphicalImage::AddCourbe(ValueMap courbeName){
 
 int graphicalImage::getLastId(){
 }
+*/
