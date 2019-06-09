@@ -3,6 +3,8 @@
 #include <Draw/Draw.h>
 #include <CtrlLib/CtrlLib.h>
 #include <cctype>
+#include <string> 
+
 using namespace Upp;
 
 void Discord_DrawPackage::drawTest(ValueMap payload){
@@ -89,13 +91,16 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				in.Seek(0);
 				while(!in.IsEof())
 					e+=in.GetLine();
-				
 			
 				ValueMap data = ParseJSON(e);
-			
+				
+				GraphDotCloud newGraph(500,500,"test Graph","Date", "Rank");
+				
+				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
+				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				//graphicalImage myGraph(500,500,White());
 				//myGraph.drawByValueMap(data);
-				
+				ptrBot->CreateMessage(channel, newGraph.GetInformation());
 			}	
 		}
 	}
@@ -152,6 +157,9 @@ String Graph::GetInformation(){
 	return information;
 }
 
+int Courbe::objectCount=0;
+int Dot::objectCount=0;
+
 
 /***********************************************/
 // Class GraphDotCloud 
@@ -164,8 +172,12 @@ String GraphDotCloud::GetInformation(){
 	String information=Graph::GetInformation();
 	information << "Type of graph : " << this->TypeOfGraph() <<"\n";
 	information << "------------Courbes information-----------" <<"\n";
-	information << "Courbes number : " << this->AllCourbes.GetCount() <<"\n";
+	information << "Courbes number : " << this->courbes.GetCount() <<"\n";
+	for(Courbe &c : courbes){
+		information << c.GetInformation();	
+	}
 	information << "----------------------------------------" <<"\n";
+	return information;
 }
 
 String GraphDotCloud::TypeOfGraph(){ //Return type of graph
@@ -178,15 +190,15 @@ ImageDraw GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing
 }
 
 //Data Manipulation
-void GraphDotCloud::AddCourbe(Courbe &c){
-//	this->AllCourbes.Add(c);
+void GraphDotCloud::AddCourbe(Courbe c){
+	courbes.Add(c);
 }
 
 void GraphDotCloud::RemoveCourbe(Courbe &c){//This one use address to find the right courbe
 	int i =0;
-	for(Courbe &r : AllCourbes){
+	for(Courbe &r : courbes){
 		if (&r == &c){
-			AllCourbes.Remove(i);	
+			courbes.Remove(i);	
 			break;
 		}
 		i++;
@@ -194,11 +206,11 @@ void GraphDotCloud::RemoveCourbe(Courbe &c){//This one use address to find the r
 }
 
 void GraphDotCloud::RemoveCourbe(int i){
-	AllCourbes.Remove(i);	
+	courbes.Remove(i);	
 }
 
 Courbe& GraphDotCloud::operator[](int iterator){ //allowing to access to courbe stocked in AllCourbes
-	return AllCourbes[iterator];
+	return courbes[iterator];
 }
 
 //Bunch of constructor
@@ -265,7 +277,7 @@ Dot& Courbe::operator[](int iterator){
 	return dots[iterator];
 }
 
-Dot& Courbe::AddDot(Dot &d){
+Dot& Courbe::AddDot(Dot d){
 	dots.Add(d);	
 }
 
@@ -284,6 +296,14 @@ void Courbe::removeDot(Dot &dot){
 	}
 }
 
+String Courbe::GetInformation(){
+	String information="";
+	information <<"    -----Courbe " << String(std::to_string( this->GetId())) <<"-----\n";
+	information << "    Courbe name : " << this->name <<"\n";
+	information << "    Courbe color : " << this->color.ToString() <<"\n";
+	return information;
+}
+
 int Courbe::GetId(){
 	return id;
 }
@@ -295,7 +315,7 @@ Courbe::Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueTyp
 	this->YValueType = _YValueType;
 	this->color = _color;
 	id = objectCount;
-	Courbe::objectCount++;
+	objectCount++;
 }
 
 Courbe::Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType){
@@ -303,17 +323,17 @@ Courbe::Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueTyp
 	this->XValueType = _XValueType;
 	this->YValueType = _YValueType;
 	id = objectCount;
-	Courbe::objectCount++;
+	objectCount++;
 }
 
 Courbe::Courbe(String _Name){
 	this->name = _Name;
 	id = objectCount;
-	Courbe::objectCount++;
+	objectCount++;
 }
 
 Courbe::~Courbe(){
-	Courbe::objectCount--;	
+	objectCount--;	
 }
 
 /***********************************************/
@@ -330,15 +350,19 @@ int Dot::GetId(){
 	return id;
 }
 
+String Dot::GetInformation(){
+		
+}
+
 Dot::Dot(Value _XValue,Value _YValue){
 	XValue = _XValue;
 	YValue = _YValue;
 	id = objectCount;
-	Dot::objectCount++;
+	objectCount++;
 }
 
 Dot::~Dot(){
-	Dot::objectCount--;
+	objectCount--;
 }
 
 //Class Graphical Image

@@ -6,8 +6,8 @@ uses
 	CtrlLib;
 
 file
-	Discord_DrawPackage.h,
-	Discord_DrawPackage.cpp;
+	GraphBuilder.h,
+	GraphBuilder.cpp;
 
 mainconfig
 	"" = "";

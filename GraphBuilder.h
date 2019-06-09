@@ -61,6 +61,7 @@ class Graph{
 /***********************************************/
 class Courbe;
 class Dot;
+
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
 //Not sure if embbed class of Graph into Graph is a good idea
@@ -68,7 +69,7 @@ class GraphDotCloud : Graph{
 	private:
 		const String graphType="DotCloud";
 		
-		Vector<Courbe> AllCourbes; 
+		Vector<Courbe> courbes; 
 		
 		bool showLegendsOfCourbes=false;
 		bool showValueOfDot=true;
@@ -82,7 +83,7 @@ class GraphDotCloud : Graph{
 		ImageDraw DrawGraph(); //Used to return an ImageDraw representing the graph
 		
 		//Data Manipulation
-		void AddCourbe(Courbe &c);
+		void AddCourbe(Courbe c);
 		void RemoveCourbe(Courbe &c);
 		void RemoveCourbe(int i);
 		
@@ -107,7 +108,6 @@ class GraphDotCloud : Graph{
 class Courbe : public Moveable<Courbe>{
 	private :
 		LabelValueToShow labelToShow = LabelValueToShow::XVALUE; // Define Label to show
-		static int objectCount; //Here to know how many Courbe is On while using graph
 		int id; //Here to know Id Of this courbe
 		
 		String name=""; //Name of the courbe
@@ -121,15 +121,17 @@ class Courbe : public Moveable<Courbe>{
 		bool ShowValueLabel = true; //Show label for each dot
 		bool linkDot = true; //protected to allow mother class to access it
 	public:
+		static int objectCount;//Here to know how many Courbe is On while using graph
 		void LinkDot(bool b); //Enable or not linking on dot
 		void ValueToShow(LabelValueToShow _labelToShow); //Define axis label to show
 		
-		Dot& AddDot(Dot &d);
+		Dot& AddDot(Dot d);
 		
 		Dot& operator[](int iterator);
 		void removeDot(int iterator);
 		void removeDot(Dot &dot);
 		
+		String GetInformation();
 		int GetId();
 		//Bunch of constructor
 		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color);
@@ -141,19 +143,23 @@ class Courbe : public Moveable<Courbe>{
 
 class Dot : public Moveable<Dot>{
 	private:
-		static int objectCount;
 		int id;
 		
 		Value XValue;
 		Value YValue;		
 	public:
+		static int objectCount;
 		void SetXValue(Value _XValue);
 		void SetYValue(Value _YValue);
+		String GetInformation();
 		int GetId();
 		
 		Dot(Value _XValue,Value _YValue);
 		~Dot();
 };
+
+
+
 /***********************************************/
 // End of Courbe graph
 /***********************************************/
