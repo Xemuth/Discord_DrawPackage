@@ -27,7 +27,7 @@ class Discord_DrawPackage: public DiscordModule{
 
 //Virtual Class, supposed to be inherrited to new graph type
 class Graph{
-	private:
+	protected:
 		String graphName=""; //name of graph 
 		String XName=""; //Name of X axis
 		String YName=""; //Name of Y axis
@@ -36,6 +36,7 @@ class Graph{
 		bool showAxisNames =true;
 		bool showGraphName =true;
 	public: 
+		virtual String ToJson()=0;
 		virtual String GetInformation() =0; //Here we force Override in inherited class
 											//This func used to print information about the
 											//graph
@@ -59,6 +60,9 @@ class Graph{
 // Oject used to Represent DotCloud graph 
 /***********************************************/
 class Courbe;
+class Dot;
+enum class LabelValueToShow {XVALUE,YVALUE};
+enum class ValueTypeEnum{INT,DATE};
 //Not sure if embbed class of Graph into Graph is a good idea
 class GraphDotCloud : Graph{
 	private:
@@ -71,6 +75,9 @@ class GraphDotCloud : Graph{
 		bool signIt=true; //This one is here for fun. Signing it with my name ! 
 		
 	public:
+		String ToJson();
+		String GetInformation();
+		
 		String TypeOfGraph(); //Return type of graph
 		ImageDraw DrawGraph(); //Used to return an ImageDraw representing the graph
 		
@@ -79,7 +86,7 @@ class GraphDotCloud : Graph{
 		void RemoveCourbe(Courbe &c);
 		void RemoveCourbe(int i);
 		
-		Courbe operator[](int iterator); //allowing to access to courbe stocked in AllCourbes
+		Courbe& operator[](int iterator); //allowing to access to courbe stocked in AllCourbes
 		
 		//Bunch of constructor
 		GraphDotCloud(int _XSize,int _YSize);
@@ -92,36 +99,61 @@ class GraphDotCloud : Graph{
 		//params
 		void ShowLegendsOfCourbes(bool b);
 		void ShowValueOfDot(bool b);
-		void SignIt(bool b);
-		
-		class Dot{
-				
-		};
-		 //this class is here to handle Vector of Dot 
-		class Courbe{
-			private :
-				static int objectCount; //Here to know how many Courbe is On while using graph
-				int id; //Here to know Id Of this courbe
-				
-				String name=""; //Name of the courbe
-				Color color=Black(); //Color of the Courbe
-				
-				XValueType ="int"; //Representing of value Type
-				YValueType ="int"; //Representing of value Type
-				
-				Vector<Dot> dots; //All dot
-			protected:
-				bool linkDot = true; //protected to allow mother class to access it
-			public:
-				void LinkDot(bool b);
-		};
-	
-
-		
+		void SignIt(bool b);		
 };
  
 
+ //this class is here to handle Vector of Dot 
+class Courbe : public Moveable<Courbe>{
+	private :
+		LabelValueToShow labelToShow = LabelValueToShow::XVALUE; // Define Label to show
+		static int objectCount; //Here to know how many Courbe is On while using graph
+		int id; //Here to know Id Of this courbe
+		
+		String name=""; //Name of the courbe
+		Color color=Black(); //Color of the Courbe
+		
+		ValueTypeEnum XValueType =ValueTypeEnum::DATE; //Representing of value Type
+		ValueTypeEnum YValueType =ValueTypeEnum::INT; //Representing of value Type
+		
+		Vector<Dot> dots; //All dot
+	protected:
+		bool ShowValueLabel = true; //Show label for each dot
+		bool linkDot = true; //protected to allow mother class to access it
+	public:
+		void LinkDot(bool b); //Enable or not linking on dot
+		void ValueToShow(LabelValueToShow _labelToShow); //Define axis label to show
+		
+		Dot& AddDot(Dot &d);
+		
+		Dot& operator[](int iterator);
+		void removeDot(int iterator);
+		void removeDot(Dot &dot);
+		
+		int GetId();
+		//Bunch of constructor
+		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color);
+		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType);
+		Courbe(String _Name);
+		
+		~Courbe();
+};
 
+class Dot : public Moveable<Dot>{
+	private:
+		static int objectCount;
+		int id;
+		
+		Value XValue;
+		Value YValue;		
+	public:
+		void SetXValue(Value _XValue);
+		void SetYValue(Value _YValue);
+		int GetId();
+		
+		Dot(Value _XValue,Value _YValue);
+		~Dot();
+};
 /***********************************************/
 // End of Courbe graph
 /***********************************************/
