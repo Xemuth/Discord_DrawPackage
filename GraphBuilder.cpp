@@ -81,18 +81,10 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 	String channel  = payload["d"]["channel_id"];
 	Upp::String message = payload["d"]["content"];
 	message.Replace(String("!" +prefix +" "),"");
-	Cout() << message <<"\n";
+	Cout() <<"Events Test vrai graph : "  <<message <<"\n";
 	Vector<String> args = Split(message," ");
 	if(args.GetCount() >0 &&  args[0].Compare("test")==0){
-		if (FileExists("./example.json")){
-			FileIn in("./example.json");
-			if(in){
-				String e="";
-				in.Seek(0);
-				while(!in.IsEof())
-					e+=in.GetLine();
-			
-				ValueMap data = ParseJSON(e);
+				Cout() << "je crée le graph" <<"\n";
 				
 				GraphDotCloud newGraph(500,500,"test Graph","Date", "Rank");
 				
@@ -100,9 +92,21 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				//graphicalImage myGraph(500,500,White());
 				//myGraph.drawByValueMap(data);
-				ptrBot->CreateMessage(channel, newGraph.GetInformation());
-			}	
-		}
+				String test = newGraph.GetInformation();
+				Cout() << "Info : "<< test <<"\n";
+				ptrBot->CreateMessage(channel, test);
+			/*if (FileExists("./example.json")){
+				FileIn in("./example.json");
+				if(in){
+					String e="";
+					in.Seek(0);
+					while(!in.IsEof())
+						e+=in.GetLine();
+				
+					ValueMap data = ParseJSON(e);
+				
+				}	
+			}*/
 	}
 }
 
@@ -150,10 +154,13 @@ void Graph::ShowGraphName(bool b){this->showGraphName=b;}
 
 String Graph::GetInformation(){
 	String information="";
+
+	
 	information << "------------Graph Information-----------" <<"\n";
 	information << "Graph name : " <<this->graphName <<"\n";
 	information << "Graph Size : X -> " <<this->sz.cx  << " Y -> " << this->sz.cy <<"\n";
 	information << "Graph Axis Names : X -> " <<  this->XName << " Y -> " << this->YName <<"\n";
+
 	return information;
 }
 
@@ -170,9 +177,12 @@ String GraphDotCloud::ToJson(){
 
 String GraphDotCloud::GetInformation(){
 	String information=Graph::GetInformation();
+
 	information << "Type of graph : " << this->TypeOfGraph() <<"\n";
 	information << "------------Courbes information-----------" <<"\n";
 	information << "Courbes number : " << this->courbes.GetCount() <<"\n";
+
+	
 	for(Courbe &c : courbes){
 		information << c.GetInformation();	
 	}
@@ -181,7 +191,7 @@ String GraphDotCloud::GetInformation(){
 }
 
 String GraphDotCloud::TypeOfGraph(){ //Return type of graph
-	return TypeOfGraph();
+	return graphType;
 }
  
 ImageDraw GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the graph
@@ -308,7 +318,33 @@ int Courbe::GetId(){
 	return id;
 }
 
+String const Courbe::GetName()const{
+	return this->name;
+}
+
+void Courbe::SetName(Upp::String _name){
+	name = _name;
+}
+const Vector<Dot>&  Courbe::GetDots()const{
+	return this->dots;
+}
+
+void Courbe::SetColor(Color _c){
+	color = _c;
+}
+Color const Courbe::GetColor() const{
+	return this->color;
+}
+
 //Bunch of constructor
+Courbe::Courbe(const Courbe& c){
+	this->id = objectCount;
+	objectCount++;
+	this->name = c.GetName();
+	this->color =c.GetColor();
+	this->dots = Vector<Dot>(c.GetDots(),c.GetDots().GetCount());
+}
+
 Courbe::Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color){
 	this->name = _Name;
 	this->XValueType = _XValueType;

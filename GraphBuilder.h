@@ -65,7 +65,7 @@ class Dot;
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
 //Not sure if embbed class of Graph into Graph is a good idea
-class GraphDotCloud : Graph{
+class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 	private:
 		const String graphType="DotCloud";
 		
@@ -105,7 +105,7 @@ class GraphDotCloud : Graph{
  
 
  //this class is here to handle Vector of Dot 
-class Courbe : public Moveable<Courbe>{
+class Courbe : public Upp::Moveable<Courbe>{
 	private :
 		LabelValueToShow labelToShow = LabelValueToShow::XVALUE; // Define Label to show
 		int id; //Here to know Id Of this courbe
@@ -133,7 +133,15 @@ class Courbe : public Moveable<Courbe>{
 		
 		String GetInformation();
 		int GetId();
+		String const GetName() const;
+		void SetName(Upp::String _name);
+		const Vector<Dot>& GetDots() const;
+		
+		void SetColor(Color _c);
+		Color const GetColor() const;
+		
 		//Bunch of constructor
+		Courbe(const Courbe& c);
 		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color);
 		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType);
 		Courbe(String _Name);
@@ -141,7 +149,7 @@ class Courbe : public Moveable<Courbe>{
 		~Courbe();
 };
 
-class Dot : public Moveable<Dot>{
+class Dot : public Upp::Moveable<Dot>{
 	private:
 		int id;
 		
