@@ -64,6 +64,8 @@ class Dot;
 
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
+Upp::String ResolveValueTypeEnum(ValueTypeEnum type);
+
 //Not sure if embbed class of Graph into Graph is a good idea
 class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 	private:
@@ -100,11 +102,10 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		//params
 		void ShowLegendsOfCourbes(bool b);
 		void ShowValueOfDot(bool b);
-		void SignIt(bool b);		
+		void SignIt(bool b);
 };
  
-
- //this class is here to handle Vector of Dot 
+//this class is here to handle Vector of Dot 
 class Courbe : public Upp::Moveable<Courbe>{
 	private :
 		LabelValueToShow labelToShow = LabelValueToShow::XVALUE; // Define Label to show
@@ -140,6 +141,8 @@ class Courbe : public Upp::Moveable<Courbe>{
 		void SetColor(Color _c);
 		Color const GetColor() const;
 		
+		ValueTypeEnum GetXValueType();
+		ValueTypeEnum GetYValueType();
 		//Bunch of constructor
 		Courbe(const Courbe& c);
 		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color);
@@ -152,7 +155,7 @@ class Courbe : public Upp::Moveable<Courbe>{
 class Dot : public Upp::Moveable<Dot>{
 	private:
 		int id;
-		
+		Courbe * parent;
 		Value XValue;
 		Value YValue;		
 	public:
@@ -162,9 +165,10 @@ class Dot : public Upp::Moveable<Dot>{
 		String GetInformation();
 		int GetId();
 		
-		Dot(Value _XValue,Value _YValue);
+		Dot(Value _XValue,Value _YValue,Courbe* _parent);
 		~Dot();
 };
+
 
 
 

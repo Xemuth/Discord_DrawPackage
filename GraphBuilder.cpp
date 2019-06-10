@@ -90,6 +90,14 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
+				newGraph[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&newGraph[0]));
+				newGraph[0].AddDot(Dot(Value(Date(2019,6,28)),Value(2950),&newGraph[0]));
+				newGraph[0].AddDot(Dot(Value(Date(2019,6,29)),Value(3000),&newGraph[0]));
+				
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2600),&newGraph[1]));
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2650),&newGraph[1]));
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2700),&newGraph[1]));
+				
 				//graphicalImage myGraph(500,500,White());
 				//myGraph.drawByValueMap(data);
 				String test = newGraph.GetInformation();
@@ -167,6 +175,13 @@ String Graph::GetInformation(){
 int Courbe::objectCount=0;
 int Dot::objectCount=0;
 
+String ResolveValueTypeEnum(ValueTypeEnum type){
+	if(type == ValueTypeEnum::INT){
+		return "int";
+	}else if(type == ValueTypeEnum::DATE){
+		return "Date";	
+	}
+}
 
 /***********************************************/
 // Class GraphDotCloud 
@@ -181,8 +196,6 @@ String GraphDotCloud::GetInformation(){
 	information << "Type of graph : " << this->TypeOfGraph() <<"\n";
 	information << "------------Courbes information-----------" <<"\n";
 	information << "Courbes number : " << this->courbes.GetCount() <<"\n";
-
-	
 	for(Courbe &c : courbes){
 		information << c.GetInformation();	
 	}
@@ -311,6 +324,9 @@ String Courbe::GetInformation(){
 	information <<"    -----Courbe " << String(std::to_string( this->GetId())) <<"-----\n";
 	information << "    Courbe name : " << this->name <<"\n";
 	information << "    Courbe color : " << this->color.ToString() <<"\n";
+	for(Dot &d : dots){
+		information << d.GetInformation();	
+	}
 	return information;
 }
 
@@ -334,6 +350,13 @@ void Courbe::SetColor(Color _c){
 }
 Color const Courbe::GetColor() const{
 	return this->color;
+}
+
+ValueTypeEnum Courbe::GetXValueType(){
+	return XValueType;
+}
+ValueTypeEnum Courbe::GetYValueType(){
+	return YValueType;
 }
 
 //Bunch of constructor
@@ -387,10 +410,15 @@ int Dot::GetId(){
 }
 
 String Dot::GetInformation(){
-		
+	String information="";
+	information <<"        -----Dot " << String(std::to_string( this->GetId())) <<"-----\n";
+	information << "        X Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetXValueType()) << " Value ->" << XValue.ToString() <<"\n";
+	information << "        Y Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetYValueType()) << " Value ->" << YValue.ToString() <<"\n";
+	return information;
 }
 
-Dot::Dot(Value _XValue,Value _YValue){
+Dot::Dot(Value _XValue,Value _YValue,Courbe* _parent){
+	parent = _parent;
 	XValue = _XValue;
 	YValue = _YValue;
 	id = objectCount;
