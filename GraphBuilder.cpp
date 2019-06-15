@@ -165,6 +165,18 @@ String Graph::GetYName(){return this->YName;}
 void Graph::ShowAxisNames(bool b){this->showAxisNames = b;}
 void Graph::ShowGraphName(bool b){this->showGraphName=b;}
 void Graph::isAlpha(bool b){this->alphaMode=b;}
+
+Font Graph::GetGraphFont(){return GraphFont;}
+void Graph::SetGraphFont(Font _font){GraphFont = _font;}
+int Graph::GetGraphTikeness(){return GraphTikeness;}
+int Graph::GetGraphFontSize(){return GraphFontSize;}
+void Graph::SetGraphTikeness(int _tikeness){GraphTikeness = _tikeness;}
+void Graph::SetGraphFontSize(int _FontSize){GraphFontSize = _FontSize;}
+Color Graph::GetMainColor(){return MainColor;}
+Color Graph::GetAlphaColor(){return AlphaColor;}
+void Graph::SetMainColor(Color _MainColor){MainColor = _MainColor;}
+void Graph::SetAlphaColor(Color _AlphaColor){AlphaColor = _AlphaColor;}
+
 String Graph::GetInformation(){
 	String information="";
 
@@ -177,8 +189,12 @@ String Graph::GetInformation(){
 	return information;
 }
 
-void Graph::DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Color color,Color AlphaColor,DirectionLabel direction,bool fillWithColor,ImageDraw& img){
-	if(alphaMode)img.Alpha().DrawLine(xDebut,yDebut,xFin,yFin,tickness,AlphaColor);
+void Graph::DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness,Color color,bool fillWithColor,bool AlphaCall){
+	if(tickness==-1) tickness = this->GraphTikeness;
+	if(color.GetR()==1&&color.GetG()==1&&color.GetB()==1) color = this->MainColor;
+	if(alphaMode && !AlphaCall){
+		DrawFlecheAlphaFriendly(((ImageDraw*)&img)->Alpha(),xDebut,yDebut,xFin,yFin,direction,tickness,AlphaColor,fillWithColor,true);
+	}
 	img.DrawLine(xDebut,yDebut,xFin,yFin,tickness,color);
 	float rapportX=((sz.cx+sz.cy)/(sz.cx*0.15));
 	float rapportY=((sz.cx+sz.cy)/(sz.cy*0.15));
@@ -187,12 +203,9 @@ void Graph::DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Colo
 			yFin = yFin +(yFin*0.02);
 			Vector<Point> p;
 			p << Point((xFin +rapportX),(yFin -rapportY)) << Point((xFin-rapportX),(yFin -rapportY)) << Point(xFin,yFin);
-			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
 			img.DrawPolygon(p,color);
 		}else{
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin -(rapportY)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin -(rapportY)),tickness+1,color);
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin -(rapportY)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin -(rapportY)),tickness+1,color);
 		}
 
@@ -201,12 +214,9 @@ void Graph::DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Colo
 			yFin = yFin -(yFin*0.02);
 			Vector<Point> p;
 			p << Point((xFin +rapportX),(yFin +rapportY)) << Point((xFin -rapportX),(yFin +rapportY)) << Point(xFin,yFin);
-			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
 			img.DrawPolygon(p,color);
 		}else{
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin +(rapportY)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin +(rapportY)),tickness+1,color);
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin +(rapportY)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin +(rapportY)),tickness+1,color);
 		}
 	}else if(direction == DirectionLabel::GAUCHE){
@@ -214,31 +224,32 @@ void Graph::DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Colo
 			xFin =xFin -(xFin *0.02);
 			Vector<Point> p;
 			p << Point((xFin +rapportY),(yFin -rapportX)) << Point((xFin +rapportY),(yFin +rapportX)) << Point(xFin,yFin);
-			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
 			img.DrawPolygon(p,color);
 		}else{
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin -(rapportX)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin -(rapportX)),tickness+1,color);
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin +(rapportX)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin +(rapportX)),tickness+1,color);
 		}
 	}else if(direction == DirectionLabel::DROITE){
 		if(fillWithColor){
 			xFin =xFin +(xFin *0.02);
-			
 			Vector<Point> p;
 			p << Point((xFin -rapportY),(yFin -rapportX)) << Point((xFin -rapportY),(yFin +rapportX)) << Point(xFin,yFin);
-			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
 			img.DrawPolygon(p,color);
 		}else{		
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin -(rapportX)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin -(rapportX)),tickness+1,color);
-			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin +(rapportX)),tickness+1,AlphaColor);
 			img.DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin +(rapportX)),tickness+1,color);
 		}
 	}
 }
 
+void Graph::DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw,int angle,Font font,Color color,bool AlphaCall){
+	if(font.GetHeight()==1) font = this->GraphFont;
+	if(color.GetR()==1&&color.GetG()==1&&color.GetB()==1) color = this->MainColor;
+	if(alphaMode && !AlphaCall){
+		DrawTextAlphaFriendly(((ImageDraw*)&img)->Alpha(),xDebut,yDebut,TextToDraw,angle,font,AlphaColor,true);
+	}
+	img.DrawText(xDebut,yDebut,angle,TextToDraw,font,color);
+}
 
 int Courbe::objectCount=0;
 int Dot::objectCount=0;
@@ -278,30 +289,22 @@ String GraphDotCloud::TypeOfGraph(){ //Return type of graph
 bool GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the graph
 	float x=  sz.cx;
 	float y=  sz.cy;
-	int tikeness= 3;
-	int fontSize = 20;
-	ImageDraw w(x,  y );
-	Color MainColor = Blue();
-	Color AlphaColor = Color(220,220,220);
-
+	ImageDraw w(x, y);
+	
 	if(alphaMode){
 		w.Alpha().DrawRect(0, 0, x, y,GrayColor(0));
 	}else{
 		w.DrawRect(0, 0, x, y,White());	
 	}
-	
-	DrawFleche((x*0.10),(y*0.90),(x*0.10),(y*0.10),tikeness,MainColor,AlphaColor,DirectionLabel::HAUT,true,w);
-	DrawFleche((x*0.10),(y*0.90),(x*0.90),(y*0.90),tikeness,MainColor,AlphaColor,DirectionLabel::DROITE,true,w);
+	DrawFlecheAlphaFriendly(w,(x*0.10),(y*0.90),(x*0.10),(y*0.10),DirectionLabel::HAUT);
+	DrawFlecheAlphaFriendly(w,(x*0.10),(y*0.90),(x*0.90),(y*0.90),DirectionLabel::DROITE);
 
 	if (showAxisNames){
-		if(alphaMode) w.Alpha().DrawText((x*0.5),(y*0.95),XName,StdFont(fontSize),AlphaColor);
-		w.DrawText((x*0.5),(y*0.95),XName,StdFont(fontSize),MainColor);
-		if(alphaMode) w.Alpha().DrawText((x*0.05),(y*0.5),90*10,YName,StdFont(fontSize),AlphaColor);
-		w.DrawText((x*0.05),(y*0.5),90*10,YName,StdFont(fontSize),MainColor);
+		DrawTextAlphaFriendly(w,(x*0.5),(y*0.95),XName);
+		DrawTextAlphaFriendly(w,(x*0.05),(y*0.5),YName,90*10);
 	}
 	if(showGraphName){
-		if(alphaMode)w.Alpha().DrawText((x/2),(y*0.1),graphName,StdFont(fontSize *1.5),AlphaColor);
-		w.DrawText((x/2),(y*0.1),graphName,StdFont(fontSize *1.5),MainColor);
+		DrawTextAlphaFriendly(w,(x/2),(y*0.1),graphName,0,StdFont(GraphFontSize *1.5));
 	}
 	PNGEncoder png;
 	png.SaveFile("temp.png", w);

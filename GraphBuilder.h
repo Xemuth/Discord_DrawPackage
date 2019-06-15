@@ -35,6 +35,12 @@ class Graph{
 		String XName=""; //Name of X axis
 		String YName=""; //Name of Y axis
 		Size sz;
+		Font GraphFont = StdFont(GraphFontSize);
+		
+		int GraphTikeness= 3;
+		int GraphFontSize = 20;
+		Color MainColor = Black();
+		Color AlphaColor = Color(220,220,220);
 		
 		bool alphaMode = false;
 		bool showAxisNames =true;
@@ -60,8 +66,22 @@ class Graph{
 		virtual void ShowGraphName(bool b);
 		virtual void isAlpha(bool b);
 		
+		virtual Font GetGraphFont();
+		virtual void SetGraphFont(Font _font);
+		
+		virtual int GetGraphTikeness();
+		virtual int GetGraphFontSize();
+		virtual void SetGraphTikeness(int _tikeness);
+		virtual void SetGraphFontSize(int _FontSize);
+		
+		virtual Color GetMainColor();
+		virtual Color GetAlphaColor();
+		virtual void SetMainColor(Color _MainColor);
+		virtual void SetAlphaColor(Color _AlphaColor);
+		
 		//Methode used to draw;
-		void DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Color color,Color AlphaColor,DirectionLabel direction,bool fillWithColor,ImageDraw& img);
+		void DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness=-1,Color color=Color(1,1,1),bool fillWithColor =true,bool AlphaCall =false);
+		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
 };
 
 /***********************************************/
