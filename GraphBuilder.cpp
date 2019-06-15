@@ -86,8 +86,10 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 	if(args.GetCount() >0 &&  args[0].Compare("test")==0){
 				Cout() << "je crée le graph" <<"\n";
 				
-				GraphDotCloud newGraph(1200,700,"test Graph","Date", "Rank");
+				GraphDotCloud newGraph(1200,700,"Evolution de truc par rapport à machin","Date", "Rank");
 				newGraph.isAlpha(true);
+				newGraph.SetAlphaColor(Color(10,10,10));
+				newGraph.SetMainColor(Blue());
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&newGraph[0]));
@@ -104,7 +106,7 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				Cout() << "Info : "<< test <<"\n";
 				newGraph.DrawGraph();
 
-				ptrBot->CreateMessage(channel, newGraph.GetGraphName()  );
+				ptrBot->CreateMessage(channel,test );
 				ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
 				
 			//	ptrBot->CreateMessage(channel, test);
@@ -165,7 +167,6 @@ String Graph::GetYName(){return this->YName;}
 void Graph::ShowAxisNames(bool b){this->showAxisNames = b;}
 void Graph::ShowGraphName(bool b){this->showGraphName=b;}
 void Graph::isAlpha(bool b){this->alphaMode=b;}
-
 Font Graph::GetGraphFont(){return GraphFont;}
 void Graph::SetGraphFont(Font _font){GraphFont = _font;}
 int Graph::GetGraphTikeness(){return GraphTikeness;}
@@ -184,8 +185,13 @@ String Graph::GetInformation(){
 	information << "------------Graph Information-----------" <<"\n";
 	information << "Graph name : " <<this->graphName <<"\n";
 	information << "Graph Size : X -> " <<this->sz.cx  << " Y -> " << this->sz.cy <<"\n";
+	information << "Displayed : " << " AxisNames -> " << showAxisNames << " GraphName -> " << showGraphName <<"\n";
 	information << "Graph Axis Names : X -> " <<  this->XName << " Y -> " << this->YName <<"\n";
-
+	information << "Graph AlphaMode active : " <<  this->alphaMode <<"\n";
+	information << "Graph FontSize and Tikeness : " << " FontSize -> " << GraphFontSize << " Tikeness -> " << GraphTikeness <<"\n";
+	information << "Graph Font : " << GraphFont.GetFaceName() <<"\n";
+	information << "Graph Color : " << " MainColor -> {" << MainColor.GetR() <<","<< MainColor.GetG() << "," << MainColor.GetB() <<"}" << " AlphaColor -> {"<< AlphaColor.GetR() <<","<< AlphaColor.GetG() << "," << AlphaColor.GetB() <<"}\n";   
+		
 	return information;
 }
 
@@ -221,7 +227,7 @@ void Graph::DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int
 		}
 	}else if(direction == DirectionLabel::GAUCHE){
 		if(fillWithColor){
-			xFin =xFin -(xFin *0.02);
+			xFin =xFin -(xFin *0.01);
 			Vector<Point> p;
 			p << Point((xFin +rapportY),(yFin -rapportX)) << Point((xFin +rapportY),(yFin +rapportX)) << Point(xFin,yFin);
 			img.DrawPolygon(p,color);
@@ -231,7 +237,7 @@ void Graph::DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int
 		}
 	}else if(direction == DirectionLabel::DROITE){
 		if(fillWithColor){
-			xFin =xFin +(xFin *0.02);
+			xFin =xFin +(xFin *0.01);
 			Vector<Point> p;
 			p << Point((xFin -rapportY),(yFin -rapportX)) << Point((xFin -rapportY),(yFin +rapportX)) << Point(xFin,yFin);
 			img.DrawPolygon(p,color);
@@ -422,7 +428,7 @@ String Courbe::GetInformation(){
 	String information="";
 	information <<"    -----Courbe " << String(std::to_string( this->GetId())) <<"-----\n";
 	information << "    Courbe name : " << this->name <<"\n";
-	information << "    Courbe color : " << this->color.ToString() <<"\n";
+	information << "    Courbe color : " << "{" << this->color.GetR() <<","<< this->color.GetG() << "," << this->color.GetB() <<"}\n";
 	for(Dot &d : dots){
 		information << d.GetInformation();	
 	}
@@ -527,37 +533,3 @@ Dot::Dot(Value _XValue,Value _YValue,Courbe* _parent){
 Dot::~Dot(){
 	//objectCount--;
 }
-
-//Class Graphical Image
-/*
-graphicalImage::graphicalImage(int x,int y, Color background): myGraph(x,y){
-	myGraph.DrawRect(0,0,x,y,background);
-}
-
-ImageDraw& graphicalImage::drawByValueMap(ValueMap theGraph){
-	Definition = theGraph["graphDefinition"];
-	Data =  theGraph[Definition["GraphType"].ToString()];
-	auto numCourbes = Data[String("number" + Definition["GraphType"].ToString()) ];
-	if(numCourbes.ToString().GetCount()>0){
-		int max = std::stoi(numCourbes.ToString().ToStd());
-		for(int e = 0 ;e < max;e++){
-			Cout() << "Courbe numero " << e << " : "  <<Data[String(std::to_string(e))] <<"\n";
-		}
-	}
-
-}
-
-ImageDraw& graphicalImage::removeCourbe(String courbeName){
-	
-}
-ImageDraw& graphicalImage::removeCourbe(int Id){
-	
-}
-
-ImageDraw& graphicalImage::AddCourbe(ValueMap courbeName){
-	
-}
-
-int graphicalImage::getLastId(){
-}
-*/

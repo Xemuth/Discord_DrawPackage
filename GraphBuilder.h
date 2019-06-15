@@ -79,7 +79,8 @@ class Graph{
 		virtual void SetMainColor(Color _MainColor);
 		virtual void SetAlphaColor(Color _AlphaColor);
 		
-		//Methode used to draw;
+		//Methode used to draw
+		//It have to be used to be AlphaMode Friendly 
 		void DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness=-1,Color color=Color(1,1,1),bool fillWithColor =true,bool AlphaCall =false);
 		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
 };
