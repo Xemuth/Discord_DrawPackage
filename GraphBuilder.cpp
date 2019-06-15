@@ -86,8 +86,8 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 	if(args.GetCount() >0 &&  args[0].Compare("test")==0){
 				Cout() << "je crée le graph" <<"\n";
 				
-				GraphDotCloud newGraph(500,500,"test Graph","Date", "Rank");
-				
+				GraphDotCloud newGraph(1200,700,"test Graph","Date", "Rank");
+				newGraph.isAlpha(true);
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&newGraph[0]));
@@ -102,7 +102,12 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				//myGraph.drawByValueMap(data);
 				String test = newGraph.GetInformation();
 				Cout() << "Info : "<< test <<"\n";
-				ptrBot->CreateMessage(channel, test);
+				newGraph.DrawGraph();
+
+				ptrBot->CreateMessage(channel, newGraph.GetGraphName()  );
+				ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
+				
+			//	ptrBot->CreateMessage(channel, test);
 			/*if (FileExists("./example.json")){
 				FileIn in("./example.json");
 				if(in){
@@ -159,7 +164,7 @@ String Graph::GetXName(){return this->XName;}
 String Graph::GetYName(){return this->YName;}
 void Graph::ShowAxisNames(bool b){this->showAxisNames = b;}
 void Graph::ShowGraphName(bool b){this->showGraphName=b;}
-
+void Graph::isAlpha(bool b){this->alphaMode=b;}
 String Graph::GetInformation(){
 	String information="";
 
@@ -171,6 +176,69 @@ String Graph::GetInformation(){
 
 	return information;
 }
+
+void Graph::DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Color color,Color AlphaColor,DirectionLabel direction,bool fillWithColor,ImageDraw& img){
+	if(alphaMode)img.Alpha().DrawLine(xDebut,yDebut,xFin,yFin,tickness,AlphaColor);
+	img.DrawLine(xDebut,yDebut,xFin,yFin,tickness,color);
+	float rapportX=((sz.cx+sz.cy)/(sz.cx*0.15));
+	float rapportY=((sz.cx+sz.cy)/(sz.cy*0.15));
+	if(direction == DirectionLabel::BAS){
+		if(fillWithColor){
+			yFin = yFin +(yFin*0.02);
+			Vector<Point> p;
+			p << Point((xFin +rapportX),(yFin -rapportY)) << Point((xFin-rapportX),(yFin -rapportY)) << Point(xFin,yFin);
+			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
+			img.DrawPolygon(p,color);
+		}else{
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin -(rapportY)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin -(rapportY)),tickness+1,color);
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin -(rapportY)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin -(rapportY)),tickness+1,color);
+		}
+
+	}else if(direction == DirectionLabel::HAUT){
+		if(fillWithColor){
+			yFin = yFin -(yFin*0.02);
+			Vector<Point> p;
+			p << Point((xFin +rapportX),(yFin +rapportY)) << Point((xFin -rapportX),(yFin +rapportY)) << Point(xFin,yFin);
+			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
+			img.DrawPolygon(p,color);
+		}else{
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin +(rapportY)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin +(rapportX)),(yFin +(rapportY)),tickness+1,color);
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin +(rapportY)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin -(rapportX)),(yFin +(rapportY)),tickness+1,color);
+		}
+	}else if(direction == DirectionLabel::GAUCHE){
+		if(fillWithColor){
+			xFin =xFin -(xFin *0.02);
+			Vector<Point> p;
+			p << Point((xFin +rapportY),(yFin -rapportX)) << Point((xFin +rapportY),(yFin +rapportX)) << Point(xFin,yFin);
+			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
+			img.DrawPolygon(p,color);
+		}else{
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin -(rapportX)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin -(rapportX)),tickness+1,color);
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin +(rapportX)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin +(rapportY)),(yFin +(rapportX)),tickness+1,color);
+		}
+	}else if(direction == DirectionLabel::DROITE){
+		if(fillWithColor){
+			xFin =xFin +(xFin *0.02);
+			
+			Vector<Point> p;
+			p << Point((xFin -rapportY),(yFin -rapportX)) << Point((xFin -rapportY),(yFin +rapportX)) << Point(xFin,yFin);
+			if(alphaMode)img.Alpha().DrawPolygon(p,AlphaColor);
+			img.DrawPolygon(p,color);
+		}else{		
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin -(rapportX)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin -(rapportX)),tickness+1,color);
+			if(alphaMode)img.Alpha().DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin +(rapportX)),tickness+1,AlphaColor);
+			img.DrawLine(xFin,yFin,(xFin -(rapportY)),(yFin +(rapportX)),tickness+1,color);
+		}
+	}
+}
+
 
 int Courbe::objectCount=0;
 int Dot::objectCount=0;
@@ -207,9 +275,37 @@ String GraphDotCloud::TypeOfGraph(){ //Return type of graph
 	return graphType;
 }
  
-ImageDraw GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the graph
+bool GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the graph
+	float x=  sz.cx;
+	float y=  sz.cy;
+	int tikeness= 3;
+	int fontSize = 20;
+	ImageDraw w(x,  y );
+	Color MainColor = Blue();
+	Color AlphaColor = Color(220,220,220);
+
+	if(alphaMode){
+		w.Alpha().DrawRect(0, 0, x, y,GrayColor(0));
+	}else{
+		w.DrawRect(0, 0, x, y,White());	
+	}
 	
-	return ImageDraw(sz);
+	DrawFleche((x*0.10),(y*0.90),(x*0.10),(y*0.10),tikeness,MainColor,AlphaColor,DirectionLabel::HAUT,true,w);
+	DrawFleche((x*0.10),(y*0.90),(x*0.90),(y*0.90),tikeness,MainColor,AlphaColor,DirectionLabel::DROITE,true,w);
+
+	if (showAxisNames){
+		if(alphaMode) w.Alpha().DrawText((x*0.5),(y*0.95),XName,StdFont(fontSize),AlphaColor);
+		w.DrawText((x*0.5),(y*0.95),XName,StdFont(fontSize),MainColor);
+		if(alphaMode) w.Alpha().DrawText((x*0.05),(y*0.5),90*10,YName,StdFont(fontSize),AlphaColor);
+		w.DrawText((x*0.05),(y*0.5),90*10,YName,StdFont(fontSize),MainColor);
+	}
+	if(showGraphName){
+		if(alphaMode)w.Alpha().DrawText((x/2),(y*0.1),graphName,StdFont(fontSize *1.5),AlphaColor);
+		w.DrawText((x/2),(y*0.1),graphName,StdFont(fontSize *1.5),MainColor);
+	}
+	PNGEncoder png;
+	png.SaveFile("temp.png", w);
+	return true;
 }
 
 //Data Manipulation
@@ -426,7 +522,7 @@ Dot::Dot(Value _XValue,Value _YValue,Courbe* _parent){
 }
 
 Dot::~Dot(){
-	objectCount--;
+	//objectCount--;
 }
 
 //Class Graphical Image

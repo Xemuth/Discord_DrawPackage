@@ -26,6 +26,9 @@ class Discord_DrawPackage: public DiscordModule{
 
 
 //Virtual Class, supposed to be inherrited to new graph type
+enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
+enum class LabelValueToShow {XVALUE,YVALUE};
+enum class ValueTypeEnum{INT,DATE};
 class Graph{
 	protected:
 		String graphName=""; //name of graph 
@@ -33,6 +36,7 @@ class Graph{
 		String YName=""; //Name of Y axis
 		Size sz;
 		
+		bool alphaMode = false;
 		bool showAxisNames =true;
 		bool showGraphName =true;
 	public: 
@@ -54,6 +58,10 @@ class Graph{
 		
 		virtual void ShowAxisNames(bool b);
 		virtual void ShowGraphName(bool b);
+		virtual void isAlpha(bool b);
+		
+		//Methode used to draw;
+		void DrawFleche(int xDebut,int yDebut,int xFin,int yFin,int tickness,Color color,Color AlphaColor,DirectionLabel direction,bool fillWithColor,ImageDraw& img);
 };
 
 /***********************************************/
@@ -62,8 +70,6 @@ class Graph{
 class Courbe;
 class Dot;
 
-enum class LabelValueToShow {XVALUE,YVALUE};
-enum class ValueTypeEnum{INT,DATE};
 Upp::String ResolveValueTypeEnum(ValueTypeEnum type);
 
 //Not sure if embbed class of Graph into Graph is a good idea
@@ -82,7 +88,7 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		String GetInformation();
 		
 		String TypeOfGraph(); //Return type of graph
-		ImageDraw DrawGraph(); //Used to return an ImageDraw representing the graph
+		bool DrawGraph(); //Used to return an ImageDraw representing the graph
 		
 		//Data Manipulation
 		void AddCourbe(Courbe c);
