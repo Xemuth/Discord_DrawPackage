@@ -324,6 +324,8 @@ bool GraphDotCloud::DrawGraph(){ //Used generate temp.png
 	StartTranslation();		//Here I must describe and calcul the xf equivalent of value contened in dot;
 							//It mean I will have to loop through every dot find the lowest and max value and do
 							//A translation to our graph
+	float paddingAxisX = (xLegend*0.90)- (xLegend*0.10);
+	float paddingAxisY = (y*0.90)- (y*0.10);
 	
 		for(Courbe &c : this->courbes){
 			if(showLegendsOfCourbes){
@@ -339,10 +341,10 @@ bool GraphDotCloud::DrawGraph(){ //Used generate temp.png
 					Cout() << "YVal" <<d.GetYVal()<<"\n";
 					Cout() << resolverX <<" : " << resolverY <<"\n";
 					
-					w.DrawEllipse((((xLegend*0.10) + (xLegend - (xLegend*0.10)))  * ( 1.0-resolverX)) , ((y *resolverY) + (y*0.10)),10,10,c.GetColor());
+					w.DrawEllipse( (xLegend*0.10) + ( paddingAxisX * resolverX) ,  (y*0.10)+(paddingAxisY*resolverY) ,10,10,c.GetColor());
 					
 					//Here I must define new Function Alpha Friendly to DrawEllipse
-					if(showValueOfDot)DrawTextAlphaFriendly(w,(((xLegend*0.10) + (xLegend - (xLegend*0.10)))  * ( 1.0-resolverX)) - (xLegend *0.01) , ((y *resolverY) + (y*0.10))+(y *0.02),d.GetYVal().ToString());
+					if(showValueOfDot)DrawTextAlphaFriendly(w,(xLegend*0.10) + ( paddingAxisX * resolverX)-(xLegend*0.01) ,  (y*0.10)+(paddingAxisY*resolverY)+(y*0.01) ,d.GetYVal().ToString());
 				}
 			}
 		}
