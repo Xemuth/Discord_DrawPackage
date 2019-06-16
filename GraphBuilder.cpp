@@ -88,6 +88,7 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				
 				GraphDotCloud newGraph(1200,700,"Evolution de truc par rapport à machin","Date", "Rank");
 				//newGraph.isAlpha(true);
+				newGraph.ShowGraphName(false);
 				newGraph.ShowLegendsOfCourbes(true);
 				//newGraph.SetAlphaColor(Color(10,10,10));
 				//newGraph.SetMainColor(Blue());
@@ -107,8 +108,8 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				Cout() << "Info : "<< test <<"\n";
 				newGraph.DrawGraph();
 
-				ptrBot->CreateMessage(channel, newGraph.GetTranslationResult() );
-				ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
+				//ptrBot->CreateMessage(channel, newGraph.GetGraphName() );
+				ptrBot->SendFile(channel,"", newGraph.GetGraphName(), "temp.png");
 				
 			//	ptrBot->CreateMessage(channel, test);
 			/*if (FileExists("./example.json")){
@@ -334,8 +335,14 @@ bool GraphDotCloud::DrawGraph(){ //Used generate temp.png
 				for(Dot d : c.GetDots()){
 					float resolverX = ResolveX(d.GetXVal());
 					float resolverY = ResolveY(d.GetYVal());
+					Cout() << "XVal" <<d.GetXVal() <<"\n";
+					Cout() << "YVal" <<d.GetYVal()<<"\n";
 					Cout() << resolverX <<" : " << resolverY <<"\n";
-					w.DrawEllipse((xLegend *(resolverX +0.10)),(y *(1.0 - (resolverY+0.10))),20,20,c.GetColor());
+					
+					w.DrawEllipse((((xLegend*0.10) + (xLegend - (xLegend*0.10)))  * ( 1.0-resolverX)) , ((y *resolverY) + (y*0.10)),10,10,c.GetColor());
+					
+					//Here I must define new Function Alpha Friendly to DrawEllipse
+					if(showValueOfDot)DrawTextAlphaFriendly(w,(((xLegend*0.10) + (xLegend - (xLegend*0.10)))  * ( 1.0-resolverX)) - (xLegend *0.01) , ((y *resolverY) + (y*0.10))+(y *0.02),d.GetYVal().ToString());
 				}
 			}
 		}
@@ -433,20 +440,15 @@ String GraphDotCloud::GetTranslationResult(){
 
 float GraphDotCloud::ResolveX(Value xToResolve){
 	if (TranslationDone){
-		float x=  sz.cx;
-		float xLegend= sz.cx;
-		if(showLegendsOfCourbes) xLegend= x*0.80;
 		if(XValueType == ValueTypeEnum::INT){
-			Cout() << "Value : " << xToResolve.Get<int>()<<"\n";
-			int padding =  (xMax.Get<int>() - xMin.Get<int>());
-			Cout() << "padding : " << padding <<"\n";
-			float result = ((xToResolve.Get<int>() *100)/padding);
-			Cout() << "result : "<< result << "\n";
-			return ((result*100)/padding)/100;
+			Cout() << "Value to resolve : " << xToResolve.Get<int>()<<"\n";
+			float padding =  (xMax.Get<int>() - xMin.Get<int>());
+			float result = (padding -(xMax.Get<int>() - xToResolve.Get<int>()))/padding;
+			return result;
 		}else if(XValueType == ValueTypeEnum::DATE){
-			int padding =  (xMax.Get<Date>().Get() - xMin.Get<Date>().Get());
+			float padding =  (xMax.Get<Date>().Get() - xMin.Get<Date>().Get());
 			padding++;
-			float result = ((0.80 )/padding)*(xMax.Get<Date>().Get() - xToResolve.Get<Date>().Get());
+			float result = (padding -(xMax.Get<Date>().Get() - xToResolve.Get<Date>().Get()))/padding;
 			return result;
 		}
 	}
@@ -454,18 +456,15 @@ float GraphDotCloud::ResolveX(Value xToResolve){
 
 float GraphDotCloud::ResolveY(Value yToResolve){
 	if(TranslationDone){
-		float y=  sz.cy;
 		if(YValueType == ValueTypeEnum::INT){
-			Cout() << "Value : " << yToResolve.Get<int>()<<"\n";
-			int padding =  (yMax.Get<int>() - yMin.Get<int>());
-			Cout() << "padding : " << padding <<"\n";
-			float result = ((yToResolve.Get<int>() *100)/padding);
-			Cout() << "result : "<< result << "\n";
-			return ((result*100)/padding)/100;
+			Cout() << "Value to resolve : " << yToResolve.Get<int>()<<"\n";
+			float padding =  (yMax.Get<int>() - yMin.Get<int>());
+			float result = (padding -(yMax.Get<int>() - yToResolve.Get<int>()))/padding;
+			return result;
 		}else if(YValueType == ValueTypeEnum::DATE){
-			int padding =  (yMax.Get<Date>().Get() - yMin.Get<Date>().Get());
+			float padding =  (yMax.Get<Date>().Get() - yMin.Get<Date>().Get());
 			padding++;
-			float result = (0.80/padding)*(yMax.Get<Date>().Get() - yToResolve.Get<Date>().Get());
+			float result = (padding -(yMax.Get<Date>().Get() - yToResolve.Get<Date>().Get()))/padding;
 			return result;
 		}
 	}
