@@ -84,7 +84,7 @@ class Graph{
 		void DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness=-1,Color color=Color(1,1,1),bool fillWithColor =true,bool AlphaCall =false);
 		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
 		void DrawLineAlphaFriendly(Draw& img, int xDebut,int yDebut,int xFin,int yFin,int tickeness=-1,Color color=Color(1,1,1),bool AlphaCall = false);
-
+		
 };
 
 /***********************************************/

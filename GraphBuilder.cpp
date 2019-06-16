@@ -320,7 +320,9 @@ bool GraphDotCloud::DrawGraph(){ //Used generate temp.png
 	
 	float courbePadding=0.07;
 	float YAxisHelper=0.40;
-	StartTranslation();
+	StartTranslation();		//Here I must describe and calcul the xf equivalent of value contened in dot;
+							//It mean I will have to loop through every dot find the lowest and max value and do
+							//A translation to our graph
 	
 		for(Courbe &c : this->courbes){
 			if(showLegendsOfCourbes){
@@ -328,12 +330,13 @@ bool GraphDotCloud::DrawGraph(){ //Used generate temp.png
 				DrawTextAlphaFriendly(w,(x*0.84),(y*(YAxisHelper - 0.03)),c.GetName(),0,StdFont(GraphFontSize*1.5));
 				YAxisHelper += courbePadding;
 			}
-			
-			//Here I must describe and calcul the xf equivalent of value contened in dot;
-			//It mean I will have to loop through every dot find the lowest and max value and do
-			//A translation to our graph
-			for(Dot d : c.GetDots()){
-					
+			if(TranslationDone){ //Just looking if translation have been done
+				for(Dot d : c.GetDots()){
+					float resolverX = ResolveX(d.GetXVal());
+					float resolverY = ResolveY(d.GetYVal());
+					Cout() << resolverX <<" : " << resolverY <<"\n";
+					w.DrawEllipse((xLegend *(resolverX +0.10)),(y *(1.0 - (resolverY+0.10))),20,20,c.GetColor());
+				}
 			}
 		}
 
@@ -430,13 +433,41 @@ String GraphDotCloud::GetTranslationResult(){
 
 float GraphDotCloud::ResolveX(Value xToResolve){
 	if (TranslationDone){
-		
+		float x=  sz.cx;
+		float xLegend= sz.cx;
+		if(showLegendsOfCourbes) xLegend= x*0.80;
+		if(XValueType == ValueTypeEnum::INT){
+			Cout() << "Value : " << xToResolve.Get<int>()<<"\n";
+			int padding =  (xMax.Get<int>() - xMin.Get<int>());
+			Cout() << "padding : " << padding <<"\n";
+			float result = ((xToResolve.Get<int>() *100)/padding);
+			Cout() << "result : "<< result << "\n";
+			return ((result*100)/padding)/100;
+		}else if(XValueType == ValueTypeEnum::DATE){
+			int padding =  (xMax.Get<Date>().Get() - xMin.Get<Date>().Get());
+			padding++;
+			float result = ((0.80 )/padding)*(xMax.Get<Date>().Get() - xToResolve.Get<Date>().Get());
+			return result;
+		}
 	}
 }
 
 float GraphDotCloud::ResolveY(Value yToResolve){
 	if(TranslationDone){
-			
+		float y=  sz.cy;
+		if(YValueType == ValueTypeEnum::INT){
+			Cout() << "Value : " << yToResolve.Get<int>()<<"\n";
+			int padding =  (yMax.Get<int>() - yMin.Get<int>());
+			Cout() << "padding : " << padding <<"\n";
+			float result = ((yToResolve.Get<int>() *100)/padding);
+			Cout() << "result : "<< result << "\n";
+			return ((result*100)/padding)/100;
+		}else if(YValueType == ValueTypeEnum::DATE){
+			int padding =  (yMax.Get<Date>().Get() - yMin.Get<Date>().Get());
+			padding++;
+			float result = (0.80/padding)*(yMax.Get<Date>().Get() - yToResolve.Get<Date>().Get());
+			return result;
+		}
 	}
 }
 
