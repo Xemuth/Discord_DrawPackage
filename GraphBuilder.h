@@ -83,6 +83,8 @@ class Graph{
 		//It have to be used to be AlphaMode Friendly 
 		void DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness=-1,Color color=Color(1,1,1),bool fillWithColor =true,bool AlphaCall =false);
 		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
+		void DrawLineAlphaFriendly(Draw& img, int xDebut,int yDebut,int xFin,int yFin,int tickeness=-1,Color color=Color(1,1,1),bool AlphaCall = false);
+
 };
 
 /***********************************************/
@@ -104,7 +106,21 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		bool showValueOfDot=true;
 		bool signIt=true; //This one is here for fun. Signing it with my name ! 
 		
+		//Translation of value to Axis position
+		ValueTypeEnum XValueType =ValueTypeEnum::DATE; //Representing of value Type
+		ValueTypeEnum YValueType =ValueTypeEnum::INT; //Representing of value Type
+		
+		Value xMin;
+		Value xMax;
+		Value yMin;
+		Value yMax;
+		bool TranslationDone=false; //This one is to know if StartTranslation has been done (yeah kind of beginners programation)
+		bool StartTranslation();
+		float ResolveX(Value xToResolve);
+		float ResolveY(Value yToResolve);
+		
 	public:
+		String GetTranslationResult();
 		String ToJson();
 		String GetInformation();
 		
@@ -130,6 +146,13 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void ShowLegendsOfCourbes(bool b);
 		void ShowValueOfDot(bool b);
 		void SignIt(bool b);
+		
+		void DefineXValueType(ValueTypeEnum _xValue);
+		void DefineYValueType(ValueTypeEnum _yValue);
+		ValueTypeEnum GetXValueType();
+		ValueTypeEnum GetYValueType();
+		
+		
 };
  
 //this class is here to handle Vector of Dot 
@@ -187,8 +210,12 @@ class Dot : public Upp::Moveable<Dot>{
 		Value YValue;		
 	public:
 		static int objectCount;
+		Value GetXVal();
 		void SetXValue(Value _XValue);
+		
+		Value GetYVal();
 		void SetYValue(Value _YValue);
+		
 		String GetInformation();
 		int GetId();
 		

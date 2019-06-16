@@ -87,18 +87,19 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				Cout() << "je crée le graph" <<"\n";
 				
 				GraphDotCloud newGraph(1200,700,"Evolution de truc par rapport à machin","Date", "Rank");
-				newGraph.isAlpha(true);
-				newGraph.SetAlphaColor(Color(10,10,10));
-				newGraph.SetMainColor(Blue());
+				//newGraph.isAlpha(true);
+				newGraph.ShowLegendsOfCourbes(true);
+				//newGraph.SetAlphaColor(Color(10,10,10));
+				//newGraph.SetMainColor(Blue());
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
-				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
+				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Blue()));
 				newGraph[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&newGraph[0]));
 				newGraph[0].AddDot(Dot(Value(Date(2019,6,28)),Value(2950),&newGraph[0]));
 				newGraph[0].AddDot(Dot(Value(Date(2019,6,29)),Value(3000),&newGraph[0]));
 				
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2600),&newGraph[1]));
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2650),&newGraph[1]));
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2700),&newGraph[1]));
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2200),&newGraph[1]));
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2300),&newGraph[1]));
+				newGraph[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2500),&newGraph[1]));
 				
 				//graphicalImage myGraph(500,500,White());
 				//myGraph.drawByValueMap(data);
@@ -106,7 +107,7 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				Cout() << "Info : "<< test <<"\n";
 				newGraph.DrawGraph();
 
-				ptrBot->CreateMessage(channel,test );
+				ptrBot->CreateMessage(channel, newGraph.GetTranslationResult() );
 				ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
 				
 			//	ptrBot->CreateMessage(channel, test);
@@ -257,6 +258,15 @@ void Graph::DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToD
 	img.DrawText(xDebut,yDebut,angle,TextToDraw,font,color);
 }
 
+void Graph::DrawLineAlphaFriendly(Draw& img, int xDebut,int yDebut,int xFin,int yFin,int tickeness,Color color,bool AlphaCall){
+	if(tickeness==-1) tickeness = this->GraphTikeness;
+	if(color.GetR()==1&&color.GetG()==1&&color.GetB()==1) color = this->MainColor;
+	if(alphaMode && !AlphaCall){
+		DrawLineAlphaFriendly(((ImageDraw*)&img)->Alpha(),xDebut,yDebut,xFin,yFin,tickeness,AlphaColor,true);
+	}
+	img.DrawLine( xDebut, yDebut, xFin, yFin,tickeness,color);
+}
+
 int Courbe::objectCount=0;
 int Dot::objectCount=0;
 
@@ -292,9 +302,11 @@ String GraphDotCloud::TypeOfGraph(){ //Return type of graph
 	return graphType;
 }
  
-bool GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the graph
+bool GraphDotCloud::DrawGraph(){ //Used generate temp.png 
 	float x=  sz.cx;
 	float y=  sz.cy;
+	float xLegend= sz.cx;
+	if(showLegendsOfCourbes) xLegend= x*0.80; //Using only 80% of the image to draw Graph, last 20 % will be to draw legends
 	ImageDraw w(x, y);
 	
 	if(alphaMode){
@@ -302,19 +314,130 @@ bool GraphDotCloud::DrawGraph(){ //Used to return an ImageDraw representing the 
 	}else{
 		w.DrawRect(0, 0, x, y,White());	
 	}
-	DrawFlecheAlphaFriendly(w,(x*0.10),(y*0.90),(x*0.10),(y*0.10),DirectionLabel::HAUT);
-	DrawFlecheAlphaFriendly(w,(x*0.10),(y*0.90),(x*0.90),(y*0.90),DirectionLabel::DROITE);
+
+	DrawFlecheAlphaFriendly(w,(xLegend*0.10),(y*0.90),(xLegend*0.10),(y*0.10),DirectionLabel::HAUT);
+	DrawFlecheAlphaFriendly(w,(xLegend*0.10),(y*0.90),(xLegend*0.90),(y*0.90),DirectionLabel::DROITE);
+	
+	float courbePadding=0.07;
+	float YAxisHelper=0.40;
+	StartTranslation();
+	
+		for(Courbe &c : this->courbes){
+			if(showLegendsOfCourbes){
+				DrawLineAlphaFriendly(w,(x*0.75),(y*YAxisHelper),(x* 0.82),(y*YAxisHelper),GraphTikeness*2,c.GetColor());
+				DrawTextAlphaFriendly(w,(x*0.84),(y*(YAxisHelper - 0.03)),c.GetName(),0,StdFont(GraphFontSize*1.5));
+				YAxisHelper += courbePadding;
+			}
+			
+			//Here I must describe and calcul the xf equivalent of value contened in dot;
+			//It mean I will have to loop through every dot find the lowest and max value and do
+			//A translation to our graph
+			for(Dot d : c.GetDots()){
+					
+			}
+		}
 
 	if (showAxisNames){
-		DrawTextAlphaFriendly(w,(x*0.5),(y*0.95),XName);
-		DrawTextAlphaFriendly(w,(x*0.05),(y*0.5),YName,90*10);
+		DrawTextAlphaFriendly(w,(xLegend*0.5),(y*0.95),XName);
+		DrawTextAlphaFriendly(w,(xLegend*0.05),(y*0.5),YName,90*10);
 	}
 	if(showGraphName){
-		DrawTextAlphaFriendly(w,(x/2),(y*0.1),graphName,0,StdFont(GraphFontSize *1.5));
+		DrawTextAlphaFriendly(w,(xLegend/2),(y*0.1),graphName,0,StdFont(GraphFontSize *1.5));
 	}
 	PNGEncoder png;
 	png.SaveFile("temp.png", w);
 	return true;
+}
+
+void GraphDotCloud::DefineXValueType(ValueTypeEnum _xValue){
+	XValueType = _xValue;
+}
+
+void GraphDotCloud::DefineYValueType(ValueTypeEnum _yValue){
+	YValueType = _yValue;
+}
+
+ValueTypeEnum GraphDotCloud::GetXValueType(){
+	return XValueType;
+}
+
+ValueTypeEnum GraphDotCloud::GetYValueType(){
+	return YValueType;
+}
+
+
+bool GraphDotCloud::StartTranslation(){
+	for(Courbe &c : this->courbes){
+		if (c.GetXValueType() == XValueType && c.GetYValueType() == YValueType){
+			for(Dot d : c.GetDots()){
+				if(XValueType == ValueTypeEnum::INT){
+					if((xMax.IsVoid() && xMax.Get<int>() < d.GetXVal().Get<int>())||(!xMax.IsVoid() && xMax.Get<int>() < d.GetXVal().Get<int>())) xMax = Value(d.GetXVal().Get<int>());
+					if((xMin.IsVoid())||(!xMin.IsVoid() && xMin.Get<int>() > d.GetXVal().Get<int>())) xMin = Value(d.GetXVal().Get<int>());
+				}else if(XValueType == ValueTypeEnum::DATE){
+					if((xMax.IsVoid() && xMax.Get<Date>() < d.GetXVal().Get<Date>())||(!xMax.IsVoid() && xMax.Get<Date>() < d.GetXVal().Get<Date>())) xMax = Value(d.GetXVal().Get<Date>());
+					if((xMin.IsVoid())||(!xMin.IsVoid() && xMin.Get<Date>() > d.GetXVal().Get<Date>())) xMin = Value(d.GetXVal().Get<Date>());
+				}
+				
+				if(YValueType == ValueTypeEnum::INT){
+					if((yMax.IsVoid() && yMax.Get<int>() < d.GetYVal().Get<int>())||(!yMax.IsVoid() && yMax.Get<int>() < d.GetYVal().Get<int>())) yMax = Value(d.GetYVal().Get<int>());
+					if((yMin.IsVoid())||(!yMin.IsVoid() && yMin.Get<int>() > d.GetYVal().Get<int>())) yMin = Value(d.GetYVal().Get<int>());
+				}else if(YValueType == ValueTypeEnum::DATE){
+					if((yMax.IsVoid() && yMax.Get<Date>() < d.GetYVal().Get<Date>())||(!yMax.IsVoid() && yMax.Get<Date>() < d.GetYVal().Get<Date>())) yMax = Value(d.GetYVal().Get<Date>());
+					if((yMin.IsVoid())||(!yMin.IsVoid() && yMin.Get<Date>() > d.GetYVal().Get<Date>())) yMin = Value(d.GetYVal().Get<Date>());
+				}
+			}
+		}
+	}
+	TranslationDone = (!yMax.IsVoid() && !xMax.IsVoid() && !xMin.IsVoid() && !yMin.IsVoid());
+	Cout() << "Translation Result : " << TranslationDone <<"\n";
+	if(XValueType == ValueTypeEnum::INT){
+		Cout() << "xMax value : " << xMax.Get<int>() <<"\n";
+		Cout() << "xMin value : " << xMin.Get<int>() <<"\n";
+	}else if(XValueType == ValueTypeEnum::DATE){
+		Cout() << "xMax value : " << xMax.ToString() <<"\n";
+		Cout() << "xMin value : " << xMin.ToString() <<"\n";
+	}
+	if(YValueType == ValueTypeEnum::INT){
+		Cout() << "yMax value : " << yMax.Get<int>() <<"\n";
+		Cout() << "yMin value : " << yMin.Get<int>() <<"\n";
+	}else if(YValueType == ValueTypeEnum::DATE){
+		Cout() << "yMax value : " << yMax.ToString() <<"\n";
+		Cout() << "yMin value : " << yMin.ToString() <<"\n";
+	}
+	return TranslationDone;
+}
+
+String GraphDotCloud::GetTranslationResult(){
+	String result ="";
+	result << "Translation Result : " << TranslationDone <<"\n";
+	if(XValueType == ValueTypeEnum::INT){
+		result << "  xMax value : " << xMax.Get<int>() <<"\n";
+		result << "  xMin value : " << xMin.Get<int>() <<"\n";
+	}else if(XValueType == ValueTypeEnum::DATE){
+		result << "  xMax value : " << xMax.ToString() <<"\n";
+		result << "  xMin value : " << xMin.ToString() <<"\n";
+	}
+	if(YValueType == ValueTypeEnum::INT){
+		result << "  yMax value : " << yMax.Get<int>() <<"\n";
+		result << "  yMin value : " << yMin.Get<int>() <<"\n";
+	}else if(YValueType == ValueTypeEnum::DATE){
+		result << "  yMax value : " << yMax.ToString() <<"\n";
+		result << "  yMin value : " << yMin.ToString() <<"\n";
+	}
+	return result;
+}
+
+
+float GraphDotCloud::ResolveX(Value xToResolve){
+	if (TranslationDone){
+		
+	}
+}
+
+float GraphDotCloud::ResolveY(Value yToResolve){
+	if(TranslationDone){
+			
+	}
 }
 
 //Data Manipulation
@@ -427,8 +550,8 @@ void Courbe::removeDot(Dot &dot){
 String Courbe::GetInformation(){
 	String information="";
 	information <<"    -----Courbe " << String(std::to_string( this->GetId())) <<"-----\n";
-	information << "    Courbe name : " << this->name <<"\n";
-	information << "    Courbe color : " << "{" << this->color.GetR() <<","<< this->color.GetG() << "," << this->color.GetB() <<"}\n";
+	information <<"    Courbe name : " << this->name <<"\n";
+	information <<"    Courbe color : " << "{" << this->color.GetR() <<","<< this->color.GetG() << "," << this->color.GetB() <<"}\n";
 	for(Dot &d : dots){
 		information << d.GetInformation();	
 	}
@@ -510,6 +633,15 @@ void Dot::SetXValue(Value _XValue){
 void Dot::SetYValue(Value _YValue){
 	YValue = _YValue;
 }
+
+Value Dot::GetYVal(){
+	return YValue;	
+}
+
+Value Dot::GetXVal(){
+	return XValue;
+}
+
 int Dot::GetId(){
 	return id;
 }
