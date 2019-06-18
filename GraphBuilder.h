@@ -2,8 +2,9 @@
 #define _GraphBuilder_GraphBuilder_h_
 #include <SmartUppBot/SmartBotUpp.h>
 #include <CtrlLib/CtrlLib.h>
-
+#include <Draw/Draw.h>
 using namespace Upp;
+
 
 class Discord_DrawPackage: public DiscordModule{
 	private:
@@ -50,7 +51,6 @@ class Graph{
 		virtual String GetInformation() =0; //Here we force Override in inherited class
 											//This func used to print information about the
 											//graph
-	
 		virtual void SetGraphName(Upp::String _GraphName);
 		virtual Upp::String GetGraphName();
 		
@@ -84,7 +84,7 @@ class Graph{
 		void DrawFlecheAlphaFriendly(Draw& img,int xDebut,int yDebut,int xFin,int yFin,DirectionLabel direction,int tickness=-1,Color color=Color(1,1,1),bool fillWithColor =true,bool AlphaCall =false);
 		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
 		void DrawLineAlphaFriendly(Draw& img, int xDebut,int yDebut,int xFin,int yFin,int tickeness=-1,Color color=Color(1,1,1),bool AlphaCall = false);
-		
+		void DrawEllispeAlphaFriendly(Draw& img,int xDebut,int yDebut, int RadiusX , int RadiusY,Color color = Color(1,1,1),bool AlphaCall = false);
 };
 
 /***********************************************/
@@ -99,6 +99,7 @@ Upp::String ResolveValueTypeEnum(ValueTypeEnum type);
 class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 	private:
 		const String graphType="DotCloud";
+		ImageDraw img;
 		
 		Vector<Courbe> courbes; 
 		
@@ -125,7 +126,7 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		String GetInformation();
 		
 		String TypeOfGraph(); //Return type of graph
-		bool DrawGraph(); //Used to return an ImageDraw representing the graph
+		const ImageDraw& DrawGraph(); //Used to return an ImageDraw representing the graph
 		
 		//Data Manipulation
 		void AddCourbe(Courbe c);
