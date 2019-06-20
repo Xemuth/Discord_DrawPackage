@@ -106,6 +106,17 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		bool showLegendsOfCourbes=false;
 		bool showValueOfDot=true;
 		bool signIt=true; //This one is here for fun. Signing it with my name ! 
+		bool ValueOnAxis=true;
+		
+		bool IntStartAtLowestSpecifiedNumberAxisX = false; //Specify if int Axis should start at SpecifiedLowestStartingNumber or use default padding system
+		bool IntStartAtHighestSpecifiedNumberAxisX = false; //Specify if int Axis should start at SpecifiedHighestStartingNumber or use default padding system
+		int SpecifiedLowestStartingNumberAxisX = 0; //Define Lowest axis number if Int
+		int SpecifiedHighestStartingNumberAxisX = 0; //Define Max axis number if Int
+		
+		bool IntStartAtLowestSpecifiedNumberAxisY = false; //Specify if int Axis should start at SpecifiedLowestStartingNumber or use default padding system
+		bool IntStartAtHighestSpecifiedNumberAxisY = false; //Specify if int Axis should start at SpecifiedHighestStartingNumber or use default padding system
+		int SpecifiedLowestStartingNumberAxisY = 0; //Define Lowest axis number if Int
+		int SpecifiedHighestStartingNumberAxisY = 0; //Define Max axis number if Int
 		
 		//Translation of value to Axis position
 		ValueTypeEnum XValueType =ValueTypeEnum::DATE; //Representing of value Type
@@ -119,6 +130,12 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		bool StartTranslation();
 		float ResolveX(Value xToResolve);
 		float ResolveY(Value yToResolve);
+		
+		int GetYPaddingInteger(); //Return int padding, Translation must have been done
+		int GetXPaddingInteger();//Return int padding, Translation must have been done
+		
+		//Used to draw
+		void DrawValueOnAxisAlphaFriendly(Draw& img,float X,float Y,float paddingX,float paddingY,bool AlphaCall = false);
 		
 	public:
 		String GetTranslationResult();
@@ -147,12 +164,34 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void ShowLegendsOfCourbes(bool b);
 		void ShowValueOfDot(bool b);
 		void SignIt(bool b);
+		void ShowValueOnAxis(bool b);
+		
+		void SetActivatedSpecifiedLowestAxisX(bool b);//Specify if int Axis should start at SpecifiedStartingNumber or padding
+		bool IsActivatedSpecifiedLowestAxisX();
+		void SetActivatedSpecifiedHighestAxisX(bool b);//Specify if int Axis should start at SpecifiedStartingNumber or padding
+		bool IsActivatedSpecifiedHighestAxisX();
+		
+		void SetActivatedSpecifiedLowestAxisY(bool b);//Specify if int Axis should start at SpecifiedStartingNumber or padding
+		bool IsActivatedSpecifiedLowestAxisY();
+		void SetActivatedSpecifiedHighestAxisY(bool b);//Specify if int Axis should start at SpecifiedStartingNumber or padding
+		bool IsActivatedSpecifiedHighestAxisY();
+		
+		void SetSpecifiedLowestStartingNumberAxisX(int _number);
+		int GetSpecifiedLowestStartingNumberAxisX();
+		void SetSpecifiedHighestStartingNumberAxisX(int _number);
+		int GetSpecifiedHighestStartingNumberAxisX();
+		
+		void SetSpecifiedLowestStartingNumberAxisY(int _number);
+		int GetSpecifiedLowestStartingNumberAxisY();
+		void SetSpecifiedHighestStartingNumberAxisY(int _number);
+		int GetSpecifiedHighestStartingNumberAxisY();
+		
 		
 		void DefineXValueType(ValueTypeEnum _xValue);
 		void DefineYValueType(ValueTypeEnum _yValue);
 		ValueTypeEnum GetXValueType();
 		ValueTypeEnum GetYValueType();
-		
+
 		
 };
  

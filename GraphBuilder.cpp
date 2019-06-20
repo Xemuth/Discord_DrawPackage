@@ -5,11 +5,11 @@
 #include <string> 
 
 
-
+/*
 #define IMAGECLASS WowImg
 #define IMAGEFILE <GraphBuilder/wow.iml>
 #include <Draw/iml.h>
-
+*/
 
 using namespace Upp;
 
@@ -98,6 +98,14 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 			//	newGraph.isAlpha(true);
 				newGraph.ShowGraphName(true);
 				newGraph.ShowLegendsOfCourbes(true);
+				
+			//	newGraph.SetActivatedSpecifiedLowestAxisY(true);
+		//		newGraph.SetActivatedSpecifiedHighestAxisY(true);
+				
+		//		newGraph.SetSpecifiedHighestStartingNumberAxisY(5000);
+		//		newGraph.SetSpecifiedLowestStartingNumberAxisY(0);
+				
+				
 				//newGraph.SetAlphaColor(Color(10,10,10));
 				//newGraph.SetMainColor(Blue());
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
@@ -307,6 +315,57 @@ String ResolveValueTypeEnum(ValueTypeEnum type){
 /***********************************************/
 // Class GraphDotCloud 
 /***********************************************/
+void GraphDotCloud::SetActivatedSpecifiedLowestAxisX(bool b){IntStartAtLowestSpecifiedNumberAxisX = b;}
+bool GraphDotCloud::IsActivatedSpecifiedLowestAxisX(){return IntStartAtLowestSpecifiedNumberAxisX;}
+void GraphDotCloud::SetActivatedSpecifiedHighestAxisX(bool b){IntStartAtHighestSpecifiedNumberAxisX = b;}
+bool GraphDotCloud::IsActivatedSpecifiedHighestAxisX(){return IntStartAtHighestSpecifiedNumberAxisX;}
+
+void GraphDotCloud::SetActivatedSpecifiedLowestAxisY(bool b){IntStartAtLowestSpecifiedNumberAxisY = b;}
+bool GraphDotCloud::IsActivatedSpecifiedLowestAxisY(){return IntStartAtLowestSpecifiedNumberAxisY;}
+void GraphDotCloud::SetActivatedSpecifiedHighestAxisY(bool b){IntStartAtHighestSpecifiedNumberAxisY = b;}
+bool GraphDotCloud::IsActivatedSpecifiedHighestAxisY(){return IntStartAtHighestSpecifiedNumberAxisY;}
+
+void GraphDotCloud::SetSpecifiedLowestStartingNumberAxisX(int _number){ SpecifiedLowestStartingNumberAxisX = _number;}
+int GraphDotCloud::GetSpecifiedLowestStartingNumberAxisX(){return SpecifiedLowestStartingNumberAxisX;}
+void GraphDotCloud::SetSpecifiedHighestStartingNumberAxisX(int _number){ SpecifiedHighestStartingNumberAxisX = _number;}
+int GraphDotCloud::GetSpecifiedHighestStartingNumberAxisX(){return SpecifiedHighestStartingNumberAxisX;}
+
+void GraphDotCloud::SetSpecifiedLowestStartingNumberAxisY(int _number){ SpecifiedLowestStartingNumberAxisY = _number;}
+int GraphDotCloud::GetSpecifiedLowestStartingNumberAxisY(){return SpecifiedLowestStartingNumberAxisY;}
+void GraphDotCloud::SetSpecifiedHighestStartingNumberAxisY(int _number){ SpecifiedHighestStartingNumberAxisY = _number;}
+int GraphDotCloud::GetSpecifiedHighestStartingNumberAxisY(){return SpecifiedHighestStartingNumberAxisY;}
+
+void GraphDotCloud::ShowLegendsOfCourbes(bool b){showLegendsOfCourbes=b;}
+void GraphDotCloud::ShowValueOfDot(bool b){showValueOfDot=b;}
+void GraphDotCloud::SignIt(bool b){signIt=b;} 
+void GraphDotCloud::ShowValueOnAxis(bool b){ValueOnAxis = b;}
+
+void GraphDotCloud::DrawValueOnAxisAlphaFriendly(Draw& img,float X,float Y,float paddingX,float paddingY,bool AlphaCall){
+	if(alphaMode && !AlphaCall){
+		DrawValueOnAxisAlphaFriendly(((ImageDraw*)&img)->Alpha(),X,Y,paddingX,paddingY,true);
+	}
+	//First we do it to X axis
+	if(XValueType == ValueTypeEnum::INT){
+		//TODO
+	}else if(XValueType == ValueTypeEnum::DATE){
+		//TODO
+	}
+	if(YValueType == ValueTypeEnum::INT){
+		int yPadding = GetYPaddingInteger();
+		int unit=  yPadding/10;
+		int min = (IntStartAtLowestSpecifiedNumberAxisY)? SpecifiedLowestStartingNumberAxisY : yMin.Get<int>();
+		for(int e = 0; e < 11 ; e++){
+			float y = ResolveY(Value(min));
+			if(e!=10 && e !=0) DrawLineAlphaFriendly(img,X*0.09,Y -((Y*0.10)+(paddingY*y)),X*0.10,Y -((Y*0.10)+(paddingY*y)));
+			DrawTextAlphaFriendly(img,X*0.05,Y -((Y*0.11)+(paddingY*y)),String(std::to_string(min)));
+			min += unit;
+		}	
+	}else if(YValueType == ValueTypeEnum::DATE){	
+		//TODO
+	}
+	
+}
+
 String GraphDotCloud::ToJson(){
 	return "Supposed to Be Json";
 }
@@ -315,6 +374,14 @@ String GraphDotCloud::GetInformation(){
 	String information=Graph::GetInformation();
 
 	information << "Type of graph : " << this->TypeOfGraph() <<"\n";
+	information << "X Axis specified hightest Range : " << IntStartAtHighestSpecifiedNumberAxisX << String( IntStartAtHighestSpecifiedNumberAxisX? (" Value -> " + GetSpecifiedHighestStartingNumberAxisX()):"" ) << "\n";
+	information << "X Axis specified lowest Range : " << IntStartAtLowestSpecifiedNumberAxisX <<  String( IntStartAtLowestSpecifiedNumberAxisX? (" Value -> " + GetSpecifiedLowestStartingNumberAxisX()):"" ) << "\n";
+	String buffer="";
+	if(IntStartAtHighestSpecifiedNumberAxisY) buffer << " Value -> " <<  String(std::to_string(GetSpecifiedHighestStartingNumberAxisY()));
+	information << "Y Axis specified hightest Range : " << IntStartAtHighestSpecifiedNumberAxisY << buffer << "\n";
+	buffer="";
+	if(IntStartAtLowestSpecifiedNumberAxisY) buffer << " Value -> " <<  String(std::to_string(GetSpecifiedLowestStartingNumberAxisY()));
+	information << "Y Axis specified lowest Range : " << IntStartAtLowestSpecifiedNumberAxisY <<buffer << "\n";
 	information << "------------Courbes information-----------" <<"\n";
 	information << "Courbes number : " << this->courbes.GetCount() <<"\n";
 	for(Courbe &c : courbes){
@@ -339,7 +406,7 @@ const ImageDraw& GraphDotCloud::DrawGraph(){ //Used generate temp.png
 	}else{
 		img.DrawRect(0, 0, x, y,White());	
 	}
-	img.DrawImage(0,0,WowImg::Cat());
+	//img.DrawImage(0,0,WowImg::Cat());
 	DrawFlecheAlphaFriendly(img,(xLegend*0.09),(y*0.91),(xLegend*0.09),(y*0.10),DirectionLabel::HAUT);
 	DrawFlecheAlphaFriendly(img,(xLegend*0.09),(y*0.91),(xLegend*0.90),(y*0.91),DirectionLabel::DROITE);
 	float courbePadding=0.07;
@@ -350,27 +417,31 @@ const ImageDraw& GraphDotCloud::DrawGraph(){ //Used generate temp.png
 	float paddingAxisX = (xLegend*0.90)- (xLegend*0.10);
 	float paddingAxisY = (y*0.90)- (y*0.10);
 	
-		for(Courbe &c : this->courbes){
-			if(showLegendsOfCourbes){
-				DrawLineAlphaFriendly(img,(x*0.75),(y*YAxisHelper),(x* 0.82),(y*YAxisHelper),GraphTikeness*2,c.GetColor());
-				DrawTextAlphaFriendly(img,(x*0.84),(y*(YAxisHelper - 0.03)),c.GetName(),0,StdFont(GraphFontSize*1.5));
-				YAxisHelper += courbePadding;
-			}
-			if(TranslationDone){ //Just looking if translation have been done
-				for(Dot d : c.GetDots()){
-					float resolverX = ResolveX(d.GetXVal());
-					float resolverY = ResolveY(d.GetYVal());
-					DrawEllispeAlphaFriendly(img,( ((xLegend*0.10) + ( paddingAxisX * resolverX))) , (y- ((y*0.10)+(paddingAxisY*resolverY))) ,10,10,c.GetColor());
-					if(showValueOfDot)DrawTextAlphaFriendly(img,(((xLegend*0.11) +(paddingAxisX * resolverX))),(y- ((y*0.11)+(paddingAxisY*resolverY))),d.GetYVal().ToString());
-				}
+	if(ValueOnAxis)DrawValueOnAxisAlphaFriendly(img,xLegend,y,paddingAxisX,paddingAxisY);
+	
+	for(Courbe &c : this->courbes){
+		if(showLegendsOfCourbes){
+			DrawLineAlphaFriendly(img,(x*0.75),(y*YAxisHelper),(x* 0.82),(y*YAxisHelper),GraphTikeness*2,c.GetColor());
+			DrawTextAlphaFriendly(img,(x*0.84),(y*(YAxisHelper - 0.03)),c.GetName(),0,StdFont(GraphFontSize*1.5));
+			YAxisHelper += courbePadding;
+		}
+		if(TranslationDone){ //Just looking if translation have been done
+			for(Dot d : c.GetDots()){
+				float resolverX = ResolveX(d.GetXVal());
+				float resolverY = ResolveY(d.GetYVal());
+				DrawEllispeAlphaFriendly(img,( ((xLegend*0.10) + ( paddingAxisX * resolverX))) , (y- ((y*0.10)+(paddingAxisY*resolverY))) ,10,10,c.GetColor());
+				if(showValueOfDot)DrawTextAlphaFriendly(img,(((xLegend*0.11) +(paddingAxisX * resolverX))),(y- ((y*0.11)+(paddingAxisY*resolverY))),d.GetYVal().ToString());
+				
 			}
 		}
+	}
+	
 	if (showAxisNames){
-		DrawTextAlphaFriendly(img,(xLegend*0.5),(y*0.95),XName);
-		DrawTextAlphaFriendly(img,(xLegend*0.05),(y*0.5),YName,90*10);
+		DrawTextAlphaFriendly(img,(xLegend*0.92),(y*0.88),XName,0,StdFont(GraphFontSize *1.5));
+		DrawTextAlphaFriendly(img,(xLegend*0.06),(y*0.04),YName,0,StdFont(GraphFontSize *1.5));
 	}
 	if(showGraphName){
-		DrawTextAlphaFriendly(img,(xLegend/2),(y*0.1),graphName,0,StdFont(GraphFontSize *1.5));
+		DrawTextAlphaFriendly(img,(xLegend*0.40),(y*0.07),graphName,0,StdFont(GraphFontSize *1.5));
 	}
 	return img;
 }
@@ -473,8 +544,8 @@ float GraphDotCloud::ResolveX(Value xToResolve){
 	if (TranslationDone){
 		if(XValueType == ValueTypeEnum::INT){
 			Cout() << "Value to resolve : " << xToResolve.Get<int>()<<"\n";
-			float padding =  (xMax.Get<int>() - xMin.Get<int>());
-			float result = (padding -(xMax.Get<int>() - xToResolve.Get<int>()))/padding;
+			float padding =  (((IntStartAtHighestSpecifiedNumberAxisX)? GetSpecifiedHighestStartingNumberAxisX():xMax.Get<int>())-((IntStartAtLowestSpecifiedNumberAxisX)? GetSpecifiedLowestStartingNumberAxisX():xMin.Get<int>())); //Here I apply Lowest/Highest if set true
+			float result = (padding -(((IntStartAtHighestSpecifiedNumberAxisX)? GetSpecifiedHighestStartingNumberAxisX():xMax.Get<int>()) - xToResolve.Get<int>()))/padding;
 			return result;
 		}else if(XValueType == ValueTypeEnum::DATE){
 			float padding =  (xMax.Get<Date>().Get() - xMin.Get<Date>().Get());
@@ -485,12 +556,24 @@ float GraphDotCloud::ResolveX(Value xToResolve){
 	}
 }
 
+int GraphDotCloud::GetYPaddingInteger(){
+	if(YValueType == ValueTypeEnum::INT){
+		return (((IntStartAtHighestSpecifiedNumberAxisY)? GetSpecifiedHighestStartingNumberAxisY():yMax.Get<int>())-((IntStartAtLowestSpecifiedNumberAxisY)? GetSpecifiedLowestStartingNumberAxisY():yMin.Get<int>())); //Here I apply Lowest/Highest if set true
+	}
+}
+
+int GraphDotCloud::GetXPaddingInteger(){
+	if(XValueType == ValueTypeEnum::INT){
+		return (((IntStartAtHighestSpecifiedNumberAxisX)? GetSpecifiedHighestStartingNumberAxisX():xMax.Get<int>())-((IntStartAtLowestSpecifiedNumberAxisX)? GetSpecifiedLowestStartingNumberAxisX():xMin.Get<int>())); //Here I apply Lowest/Highest if set true
+	}
+}
+
 float GraphDotCloud::ResolveY(Value yToResolve){
 	if(TranslationDone){
 		if(YValueType == ValueTypeEnum::INT){
 			Cout() << "Value to resolve : " << yToResolve.Get<int>()<<"\n";
-			float padding =  (yMax.Get<int>() - yMin.Get<int>());
-			float result = (padding -(yMax.Get<int>() - yToResolve.Get<int>()))/padding;
+			float padding =  (((IntStartAtHighestSpecifiedNumberAxisY)? GetSpecifiedHighestStartingNumberAxisY():yMax.Get<int>())-((IntStartAtLowestSpecifiedNumberAxisY)? GetSpecifiedLowestStartingNumberAxisY():yMin.Get<int>())); //Here I apply Lowest/Highest if set true
+			float result = (padding -(((IntStartAtHighestSpecifiedNumberAxisY)? GetSpecifiedHighestStartingNumberAxisY():yMax.Get<int>()) - yToResolve.Get<int>()))/padding;
 			return result;
 		}else if(YValueType == ValueTypeEnum::DATE){
 			float padding =  (yMax.Get<Date>().Get() - yMin.Get<Date>().Get());
@@ -563,16 +646,6 @@ GraphDotCloud::GraphDotCloud(Size _sz):img(_sz.cx,_sz.cy){
 	sz = _sz;
 }
 
-//params
-void GraphDotCloud::ShowLegendsOfCourbes(bool b){
-	showLegendsOfCourbes=b;
-}
-void GraphDotCloud::ShowValueOfDot(bool b){
-	showValueOfDot=b;
-}
-void GraphDotCloud::SignIt(bool b){
-	signIt=b;
-}
 
 
 /***********************************************/
