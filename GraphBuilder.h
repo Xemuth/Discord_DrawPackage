@@ -3,6 +3,8 @@
 #include <SmartUppBot/SmartBotUpp.h>
 #include <CtrlLib/CtrlLib.h>
 #include <Draw/Draw.h>
+
+
 using namespace Upp;
 
 
@@ -85,6 +87,7 @@ class Graph{
 		void DrawTextAlphaFriendly(Draw& img,int xDebut,int yDebut,String TextToDraw="",int angle = 0,Font font=StdFont(1),Color color=Color(1,1,1),bool AlphaCall = false);
 		void DrawLineAlphaFriendly(Draw& img, int xDebut,int yDebut,int xFin,int yFin,int tickeness=-1,Color color=Color(1,1,1),bool AlphaCall = false);
 		void DrawEllispeAlphaFriendly(Draw& img,int xDebut,int yDebut, int RadiusX , int RadiusY,Color color = Color(1,1,1),bool AlphaCall = false);
+		void DrawImageAlphaFriendly(Draw& img,int xDebut,int yDebut,const Image& value,bool AlphaCall = false);
 };
 
 /***********************************************/
@@ -105,7 +108,7 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		
 		bool showLegendsOfCourbes=false;
 		bool showValueOfDot=true;
-		bool signIt=true; //This one is here for fun. Signing it with my name ! 
+		bool signIt=true; //This one is here for fun. Signing it with Bot name/Upp! 
 		bool ValueOnAxis=true;
 		
 		bool IntStartAtLowestSpecifiedNumberAxisX = false; //Specify if int Axis should start at SpecifiedLowestStartingNumber or use default padding system
@@ -118,6 +121,10 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		int SpecifiedLowestStartingNumberAxisY = 0; //Define Lowest axis number if Int
 		int SpecifiedHighestStartingNumberAxisY = 0; //Define Max axis number if Int
 		
+		
+		bool UseMaxDatePadding=false;
+		int SpecifiedMaxDatePadding = 10;
+		
 		//Translation of value to Axis position
 		ValueTypeEnum XValueType =ValueTypeEnum::DATE; //Representing of value Type
 		ValueTypeEnum YValueType =ValueTypeEnum::INT; //Representing of value Type
@@ -126,13 +133,23 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		Value xMax;
 		Value yMin;
 		Value yMax;
+		
 		bool TranslationDone=false; //This one is to know if StartTranslation has been done (yeah kind of beginners programation)
 		bool StartTranslation();
+		void AjustTranslation(); //Ajust translation allow graph to recalculate is YMax/YMin based on XMax/YMax
 		float ResolveX(Value xToResolve);
 		float ResolveY(Value yToResolve);
 		
-		int GetYPaddingInteger(); //Return int padding, Translation must have been done
-		int GetXPaddingInteger();//Return int padding, Translation must have been done
+		Value GetYPadding(); //Return int padding, Translation must have been done
+		Value GetXPadding();//Return int padding, Translation must have been done
+		
+		Value GetLowestValueX();
+		Value GetLowestValueY();
+		Value GetHighestValueX();
+		Value GetHighestValueY();
+	
+		bool OutThePerimeterX(Value xToResolve);
+		bool OutThePerimeterY(Value xToResolve);
 		
 		//Used to draw
 		void DrawValueOnAxisAlphaFriendly(Draw& img,float X,float Y,float paddingX,float paddingY,bool AlphaCall = false);
@@ -186,13 +203,14 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void SetSpecifiedHighestStartingNumberAxisY(int _number);
 		int GetSpecifiedHighestStartingNumberAxisY();
 		
+		void ActivateMaxDatePadding(bool b);
+		int GetMaxDatePadding();
+		void SetMaxDatePadding(int _padding);
 		
 		void DefineXValueType(ValueTypeEnum _xValue);
 		void DefineYValueType(ValueTypeEnum _yValue);
 		ValueTypeEnum GetXValueType();
 		ValueTypeEnum GetYValueType();
-
-		
 };
  
 //this class is here to handle Vector of Dot 
@@ -203,6 +221,7 @@ class Courbe : public Upp::Moveable<Courbe>{
 		
 		String name=""; //Name of the courbe
 		Color color=Black(); //Color of the Courbe
+		bool showDot=true;
 		
 		ValueTypeEnum XValueType =ValueTypeEnum::DATE; //Representing of value Type
 		ValueTypeEnum YValueType =ValueTypeEnum::INT; //Representing of value Type
@@ -210,7 +229,7 @@ class Courbe : public Upp::Moveable<Courbe>{
 		Vector<Dot> dots; //All dot
 	protected:
 		bool ShowValueLabel = true; //Show label for each dot
-		bool linkDot = true; //protected to allow mother class to access it
+		bool linked = true; //protected to allow mother class to access it
 	public:
 		static int objectCount;//Here to know how many Courbe is On while using graph
 		void LinkDot(bool b); //Enable or not linking on dot
@@ -230,6 +249,11 @@ class Courbe : public Upp::Moveable<Courbe>{
 		
 		void SetColor(Color _c);
 		Color const GetColor() const;
+		
+		void SetLinked(bool b);
+		bool IsLinked();
+		void ShowDot(bool b);
+		bool DotIsShowed();
 		
 		ValueTypeEnum GetXValueType();
 		ValueTypeEnum GetYValueType();
