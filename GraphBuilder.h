@@ -26,8 +26,17 @@ class Discord_DrawPackage: public DiscordModule{
 		void Events(ValueMap payload);
 	
 };
-
-
+/**********************************************************************
+Project created 20/05/2019
+By Clément Hamon 
+This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it
+http://www.ultimatepp.org
+Copyright © 1998, 2019 Ultimate++ team
+All those sources are contained in "plugin" directory. Refer there for licenses, however all libraries have BSD-compatible license.
+Ultimate++ has BSD license:
+License : https://www.ultimatepp.org/app$ide$About$en-us.html
+Thanks to UPP team !
+**********************************************************************/
 //Virtual Class, supposed to be inherrited to new graph type
 enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
 enum class LabelValueToShow {XVALUE,YVALUE};

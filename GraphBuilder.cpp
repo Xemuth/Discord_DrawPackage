@@ -98,16 +98,16 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				
 				newGraph.ActivateMaxDatePadding(true);
 				newGraph.SetMaxDatePadding(13);
+				
 				newGraph.SetActivatedSpecifiedLowestAxisY(true);
 				newGraph.SetSpecifiedLowestStartingNumberAxisY(2000);
-					/*		
-					newGraph.SetActivatedSpecifiedHighestAxisY(true);
-					newGraph.SetSpecifiedHighestStartingNumberAxisY(8000);
-					*/
-				
+				/*		
+				newGraph.SetActivatedSpecifiedHighestAxisY(true);
+				newGraph.SetSpecifiedHighestStartingNumberAxisY(8000);
+				*/
 				
 				//newGraph.SetAlphaColor(Color(10,10,10));
-			//	newGraph.SetMainColor(Blue());
+				//newGraph.SetMainColor(Blue());
 				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
 				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Blue()));
 				newGraph.AddCourbe(Courbe("Hugo", ValueTypeEnum::DATE, ValueTypeEnum::INT,Green()));
@@ -118,7 +118,7 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				newGraph[1].ShowDot(true);
 				newGraph[2].ShowDot(true);
 				newGraph[3].ShowDot(true);
-				
+				Cout() << "Fin Paramétrage"<<"\n";
 				
 			/*	newGraph[0].SetLinked(false);
 				newGraph[1].SetLinked(false);
@@ -138,13 +138,12 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				newGraph[0].AddDot(Dot(Value(Date(2019,7,6)),Value(3001),&newGraph[0]));
 				newGraph[0].AddDot(Dot(Value(Date(2019,7,7)),Value(2954),&newGraph[0]));
 				newGraph[0].AddDot(Dot(Value(Date(2019,7,8)),Value(2900),&newGraph[0]));
-				
+
 				newGraph[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2200),&newGraph[1]));
 				newGraph[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2300),&newGraph[1]));
 				newGraph[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2500),&newGraph[1]));
 				newGraph[1].AddDot(Dot(Value(Date(2019,7,8)),Value(2600),&newGraph[1]));
-				
-				
+
 				newGraph[2].AddDot(Dot(Value(Date(2019,6,30)),Value(2702),&newGraph[2]));
 				newGraph[2].AddDot(Dot(Value(Date(2019,7,1)),Value(2780),&newGraph[2]));
 				newGraph[2].AddDot(Dot(Value(Date(2019,7,2)),Value(2689),&newGraph[2]));
@@ -154,6 +153,7 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				newGraph[2].AddDot(Dot(Value(Date(2019,7,6)),Value(2823),&newGraph[2]));
 				newGraph[2].AddDot(Dot(Value(Date(2019,7,7)),Value(2894),&newGraph[2]));
 				newGraph[2].AddDot(Dot(Value(Date(2019,7,8)),Value(2927),&newGraph[2]));
+
 				
 				newGraph[3].AddDot(Dot(Value(Date(2019,6,27)),Value(2600),&newGraph[3]));
 				newGraph[3].AddDot(Dot(Value(Date(2019,6,28)),Value(2945),&newGraph[3]));
@@ -165,10 +165,11 @@ void Discord_DrawPackage::testVraiGraph(ValueMap payload){
 				newGraph[3].AddDot(Dot(Value(Date(2019,7,6)),Value(3060),&newGraph[3]));
 				newGraph[3].AddDot(Dot(Value(Date(2019,7,7)),Value(3050),&newGraph[3]));
 				newGraph[3].AddDot(Dot(Value(Date(2019,7,8)),Value(3084),&newGraph[3]));
+
 				
 				newGraph[4].AddDot(Dot(Value(Date(2019,6,13)),Value(1600),&newGraph[4]));
 				newGraph[4].AddDot(Dot(Value(Date(2019,7,5)),Value(1628),&newGraph[4]));
-				
+				Cout() << "Fin création"<<"\n";
 				String test = newGraph.GetInformation();
 				Cout() <<  test <<"\n";
 				
