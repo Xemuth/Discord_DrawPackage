@@ -1,5 +1,4 @@
 #include "GraphBuilder.h"
-
 #include <Core/Core.h>
 #include <cctype>
 #include <string> 
@@ -10,205 +9,97 @@
 using namespace Upp;
 
 
-
-void Discord_DrawPackage::drawTest(ValueMap payload){
-	String channel  = payload["d"]["channel_id"];
-    String id = payload["d"]["author"]["id"];
-	Upp::String message = payload["d"]["content"];
-	message.Replace(String("!" +prefix +" "),"");
-	Cout() <<message <<"\n";
-	Vector<String> args = Split(message," ");
-	if( args.GetCount() > 2 &&  args[0].Compare("draw")==0 && isStringisANumber(args[1]) && isStringisANumber(args[2]) ){
-		try{
-			args[1].Replace("+","");
-			args[2].Replace("+","");
-			float x =std::stof( args[1].ToStd());
-			float y = std::stof(args[2].ToStd());
-			String toDraw="";
-			if(args.GetCount()>3){
-				for(int i = 3; i < args.GetCount(); i++){
-					toDraw << ((i !=2)? " ":"" ) + args[i];
-				}
-			}else{
-				toDraw <<  "Test Draw !";
-			}
-			
-			ImageDraw w(x,  y );
-			w.DrawRect(0, 0, x, y, SWhite());
-			w.DrawText( (x*0.2), (y*0.2) , 320*10 ,toDraw,Roman((((((x)+(y))/2) )/(toDraw.GetCount() * 0.8) ))); // il faut adapter la taille du text par rapport à la taille de l'image et à la longueur de celui-ci
-		
-			PNGEncoder png;
-		    Image m = w;
-		    png.SaveFile("temp.png", m);
-			ptrBot->CreateMessage(channel, "Event " + name +" ; taille du text : " + String(std::to_string( ((x)+(y))/toDraw.GetCount())) );
-			ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
-		}
-		catch(...){
-			ptrBot->CreateMessage(channel, "Erreur d'argument !");
-		}
-	}
-}
-
-void Discord_DrawPackage::DrawGraph(ValueMap payload){
-	String channel  = payload["d"]["channel_id"];
-	Upp::String message = payload["d"]["content"];
-	message.Replace(String("!" +prefix +" "),"");
-	Cout() << message <<"\n";
-	Vector<String> args = Split(message," ");
-	if(args.GetCount() >0 &&  args[0].Compare("graph")==0){
-		float x=  500.0f;
-		float y=  500.0f;
-		ImageDraw w(x,  y );
-		w.DrawRect(0, 0, x, y, SWhite());
-		w.DrawLine((x*0.05),(y*0.05),(x*0.05),(y*0.95),2,SGray());
-		w.DrawLine((x*0.05),(y*0.95),(x*0.95),(y*0.95),2,SGray());
-		
-		String toDraw="";
-		if(args.GetCount()>1){
-		for(int i = 1; i < args.GetCount(); i++){
-			toDraw << ((i !=1)? " ":"" ) + args[i];
-		}
-		}else{
-			toDraw <<  "Test Draw !";
-		}
-		
-		w.DrawText((x/2),(y*0.1),toDraw,StdFont(20),SGray());
-		PNGEncoder png;
-	    Image m = w;
-	    png.SaveFile("temp.png", m);
-		ptrBot->CreateMessage(channel, "Event " + name  );
-		ptrBot->SendFile(channel,"", "Draw Test", "temp.png");
-	}
-}
-
-void Discord_DrawPackage::testVraiGraph(ValueMap payload){
-	String channel  = payload["d"]["channel_id"];
-	Upp::String message = payload["d"]["content"];
-	message.Replace(String("!" +prefix +" "),"");
-	Cout() <<"Events Test vrai graph : "  <<message <<"\n";
-	Vector<String> args = Split(message," ");
-	if(args.GetCount() >0 &&  args[0].Compare("test")==0){
-				Cout() << "je crée le graph" <<"\n";
+void GraphDotCloud::SimpleExample(){
+			//	isAlpha(true);
+				ShowGraphName(false);
+				ShowLegendsOfCourbes(true);
+				ShowValueOfDot(true);
 				
-				GraphDotCloud newGraph(1920,1080,"Example","Date", "Rank");
-			//	newGraph.isAlpha(true);
-				newGraph.ShowGraphName(false);
-				newGraph.ShowLegendsOfCourbes(true);
-				newGraph.ShowValueOfDot(true);
+				ActivateMaxDatePadding(true);
+				SetMaxDatePadding(13);
 				
-				newGraph.ActivateMaxDatePadding(true);
-				newGraph.SetMaxDatePadding(13);
-				
-				newGraph.SetActivatedSpecifiedLowestAxisY(true);
-				newGraph.SetSpecifiedLowestStartingNumberAxisY(2000);
+				SetActivatedSpecifiedLowestAxisY(true);
+				SetSpecifiedLowestStartingNumberAxisY(2000);
 				/*		
-				newGraph.SetActivatedSpecifiedHighestAxisY(true);
-				newGraph.SetSpecifiedHighestStartingNumberAxisY(8000);
+				SetActivatedSpecifiedHighestAxisY(true);
+				SetSpecifiedHighestStartingNumberAxisY(8000);
 				*/
 				
 				//newGraph.SetAlphaColor(Color(10,10,10));
 				//newGraph.SetMainColor(Blue());
-				newGraph.AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
-				newGraph.AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Blue()));
-				newGraph.AddCourbe(Courbe("Hugo", ValueTypeEnum::DATE, ValueTypeEnum::INT,Green()));
-				newGraph.AddCourbe(Courbe("Brendan", ValueTypeEnum::DATE, ValueTypeEnum::INT,Brown()));
-				newGraph.AddCourbe(Courbe("Pierre", ValueTypeEnum::DATE, ValueTypeEnum::INT,Magenta()));
+				AddCourbe(Courbe("Clement", ValueTypeEnum::DATE, ValueTypeEnum::INT,Red()));
+				AddCourbe(Courbe("Felix", ValueTypeEnum::DATE, ValueTypeEnum::INT,Blue()));
+				AddCourbe(Courbe("Hugo", ValueTypeEnum::DATE, ValueTypeEnum::INT,Green()));
+				AddCourbe(Courbe("Brendan", ValueTypeEnum::DATE, ValueTypeEnum::INT,Brown()));
+				AddCourbe(Courbe("Pierre", ValueTypeEnum::DATE, ValueTypeEnum::INT,Magenta()));
 				
-				newGraph[0].ShowDot(true);
-				newGraph[1].ShowDot(true);
-				newGraph[2].ShowDot(true);
-				newGraph[3].ShowDot(true);
+				((*this))[0].ShowDot(true);
+				((*this))[1].ShowDot(true);
+				(*this)[2].ShowDot(true);
+				(*this)[3].ShowDot(true);
 				Cout() << "Fin Paramétrage"<<"\n";
 				
-			/*	newGraph[0].SetLinked(false);
-				newGraph[1].SetLinked(false);
-				newGraph[2].SetLinked(false);
-				newGraph[3].SetLinked(false);*/
-			//	newGraph[4].ShowDot(false);
-				newGraph[0].AddDot(Dot(Value(Date(2019,3,1)),Value(2600),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,6,28)),Value(2950),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,6,29)),Value(3000),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,6,30)),Value(3015),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,1)),Value(3100),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,2)),Value(3115),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,3)),Value(3240),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,4)),Value(3200),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,5)),Value(3121),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,6)),Value(3001),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,7)),Value(2954),&newGraph[0]));
-				newGraph[0].AddDot(Dot(Value(Date(2019,7,8)),Value(2900),&newGraph[0]));
+			/*	(*this)[0].SetLinked(false);
+				(*this)[1].SetLinked(false);
+				(*this)[2].SetLinked(false);
+				(*this)[3].SetLinked(false);*/
+			//	(*this)[4].ShowDot(false);
+				(*this)[0].AddDot(Dot(Value(Date(2019,3,1)),Value(2600),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,6,27)),Value(2900),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,6,28)),Value(2950),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,6,29)),Value(3000),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,6,30)),Value(3015),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,1)),Value(3100),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,2)),Value(3115),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,3)),Value(3240),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,4)),Value(3200),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,5)),Value(3121),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,6)),Value(3001),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,7)),Value(2954),&(*this)[0]));
+				(*this)[0].AddDot(Dot(Value(Date(2019,7,8)),Value(2900),&(*this)[0]));
 
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2200),&newGraph[1]));
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2300),&newGraph[1]));
-				newGraph[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2500),&newGraph[1]));
-				newGraph[1].AddDot(Dot(Value(Date(2019,7,8)),Value(2600),&newGraph[1]));
+				(*this)[1].AddDot(Dot(Value(Date(2019,6,27)),Value(2200),&(*this)[1]));
+				(*this)[1].AddDot(Dot(Value(Date(2019,6,28)),Value(2300),&(*this)[1]));
+				(*this)[1].AddDot(Dot(Value(Date(2019,6,29)),Value(2500),&(*this)[1]));
+				(*this)[1].AddDot(Dot(Value(Date(2019,7,8)),Value(2600),&(*this)[1]));
 
-				newGraph[2].AddDot(Dot(Value(Date(2019,6,30)),Value(2702),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,1)),Value(2780),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,2)),Value(2689),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,3)),Value(2692),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,4)),Value(2741),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,5)),Value(2799),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,6)),Value(2823),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,7)),Value(2894),&newGraph[2]));
-				newGraph[2].AddDot(Dot(Value(Date(2019,7,8)),Value(2927),&newGraph[2]));
-
-				
-				newGraph[3].AddDot(Dot(Value(Date(2019,6,27)),Value(2600),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,6,28)),Value(2945),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,6,29)),Value(3174),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,6,30)),Value(3019),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,1)),Value(2987),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,4)),Value(2988),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,5)),Value(3014),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,6)),Value(3060),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,7)),Value(3050),&newGraph[3]));
-				newGraph[3].AddDot(Dot(Value(Date(2019,7,8)),Value(3084),&newGraph[3]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,6,30)),Value(2702),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,1)),Value(2780),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,2)),Value(2689),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,3)),Value(2692),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,4)),Value(2741),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,5)),Value(2799),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,6)),Value(2823),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,7)),Value(2894),&(*this)[2]));
+				(*this)[2].AddDot(Dot(Value(Date(2019,7,8)),Value(2927),&(*this)[2]));
 
 				
-				newGraph[4].AddDot(Dot(Value(Date(2019,6,13)),Value(1600),&newGraph[4]));
-				newGraph[4].AddDot(Dot(Value(Date(2019,7,5)),Value(1628),&newGraph[4]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,6,27)),Value(2600),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,6,28)),Value(2945),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,6,29)),Value(3174),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,6,30)),Value(3019),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,1)),Value(2987),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,4)),Value(2988),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,5)),Value(3014),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,6)),Value(3060),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,7)),Value(3050),&(*this)[3]));
+				(*this)[3].AddDot(Dot(Value(Date(2019,7,8)),Value(3084),&(*this)[3]));
+
+				
+				(*this)[4].AddDot(Dot(Value(Date(2019,6,13)),Value(1600),&(*this)[4]));
+				(*this)[4].AddDot(Dot(Value(Date(2019,7,5)),Value(1628),&(*this)[4]));
+				
 				Cout() << "Fin création"<<"\n";
-				String test = newGraph.GetInformation();
+				String test = GetInformation();
 				Cout() <<  test <<"\n";
 				
-				PNGEncoder png;
-				png.SaveFile("temp.png", newGraph.DrawGraph());
+			//	PNGEncoder png;
+			//	png.SaveFile("temp.png", newGraph.DrawGraph());
 				
-				//ptrBot->CreateMessage(channel, newGraph.GetInformation() );
-				ptrBot->SendFile(channel,"", newGraph.GetGraphName(), "temp.png");
-
-	}
+			//ptrBot->CreateMessage(channel, newGraph.GetInformation() );
+			//	ptrBot->SendFile(channel,"", newGraph.GetGraphName(), "temp.png");
 }
 
-
-bool Discord_DrawPackage::isStringisANumber(Upp::String stringNumber){
-	if (std::isdigit(stringNumber[0]) || (stringNumber.GetCount() > 1 && (stringNumber[0] == '+')))
-    {
-        for (int i = 1 ; i < stringNumber.GetCount(); ++i)
-            if (!std::isdigit(stringNumber[i]))
-                return false;
-
-        return true;
-    }
-    return false;
-}
-	
-Discord_DrawPackage::Discord_DrawPackage(Upp::String _name, Upp::String _prefix){
-	name = _name;
-	prefix = _prefix;
-
-	EventsMap.Add([&](ValueMap e){this->drawTest(e);});
-	EventsMap.Add([&](ValueMap e){this->DrawGraph(e);});
-	EventsMap.Add([&](ValueMap e){this->testVraiGraph(e);});
-}
-
-void Discord_DrawPackage::Events(ValueMap payload){
-	for(auto &e : EventsMap){
-		e(payload);
-	}
-}
 
 /***********************************************/
 // Class Graph 
@@ -345,6 +236,7 @@ String ResolveValueTypeEnum(ValueTypeEnum type){
 	}else if(type == ValueTypeEnum::DATE){
 		return "Date";	
 	}
+	return "int";
 }
 
 /***********************************************/
@@ -681,7 +573,9 @@ Value GraphDotCloud::GetLowestValueX(){
 		}
 		return xMin;
 	}
+	return Value();
 }
+
 Value GraphDotCloud::GetLowestValueY(){
 	if(YValueType == ValueTypeEnum::INT){
 		return ((IntStartAtLowestSpecifiedNumberAxisY)? Value(GetSpecifiedLowestStartingNumberAxisY()):yMin);
@@ -693,6 +587,7 @@ Value GraphDotCloud::GetLowestValueY(){
 		}
 		return yMin;
 	}	
+	return Value();
 }
 Value GraphDotCloud::GetHighestValueX(){
 	if(XValueType == ValueTypeEnum::INT){
@@ -700,6 +595,7 @@ Value GraphDotCloud::GetHighestValueX(){
 	}else if(XValueType == ValueTypeEnum::DATE){
 		return xMax;
 	}	
+	return Value();
 }
 Value GraphDotCloud::GetHighestValueY(){
 	if(YValueType == ValueTypeEnum::INT){
@@ -707,6 +603,7 @@ Value GraphDotCloud::GetHighestValueY(){
 	}else if(YValueType == ValueTypeEnum::DATE){
 		return yMax;
 	}	
+	return Value();
 }
 
 float GraphDotCloud::ResolveX(Value xToResolve){
@@ -729,6 +626,7 @@ float GraphDotCloud::ResolveX(Value xToResolve){
 			return -1;
 		}
 	}
+	return -1;
 }
 
 bool GraphDotCloud::OutThePerimeterX(Value xToResolve){
@@ -737,6 +635,7 @@ bool GraphDotCloud::OutThePerimeterX(Value xToResolve){
 	}else if(XValueType == ValueTypeEnum::DATE){
 		return (xToResolve.Get<Date>() < GetLowestValueX().Get<Date>() || xToResolve.Get<Date>() > GetHighestValueX().Get<Date>());
 	}
+	return false;
 }
 
 bool GraphDotCloud::OutThePerimeterY(Value xToResolve){
@@ -745,6 +644,7 @@ bool GraphDotCloud::OutThePerimeterY(Value xToResolve){
 	}else if(YValueType == ValueTypeEnum::DATE){
 		return (xToResolve.Get<Date>() < GetLowestValueY().Get<Date>() || xToResolve.Get<Date>() > GetHighestValueY().Get<Date>());
 	}
+	return false;
 }
 
 Value GraphDotCloud::GetYPadding(){
@@ -753,6 +653,7 @@ Value GraphDotCloud::GetYPadding(){
 	}else if(YValueType == ValueTypeEnum::DATE){
 		return GetHighestValueY().Get<Date>()-GetLowestValueY().Get<Date>(); //Here I apply Lowest/Highest if set true
 	}
+	return Value();
 }
 
 Value GraphDotCloud::GetXPadding(){
@@ -761,6 +662,7 @@ Value GraphDotCloud::GetXPadding(){
 	}else if(XValueType == ValueTypeEnum::DATE){
 		return GetHighestValueX().Get<Date>()-GetLowestValueX().Get<Date>(); //Here I apply Lowest/Highest if set true
 	}
+	return Value();
 }
 
 float GraphDotCloud::ResolveY(Value yToResolve){
@@ -782,6 +684,7 @@ float GraphDotCloud::ResolveY(Value yToResolve){
 			return -1;
 		}
 	}
+	return -1;
 }
 
 //Data Manipulation

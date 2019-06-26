@@ -1,31 +1,7 @@
 #ifndef _GraphBuilder_GraphBuilder_h_
 #define _GraphBuilder_GraphBuilder_h_
-#include <SmartUppBot/SmartBotUpp.h>
 #include <CtrlLib/CtrlLib.h>
 #include <Draw/Draw.h>
-
-
-using namespace Upp;
-
-
-class Discord_DrawPackage: public DiscordModule{
-	private:
-		//Events discord
-		void drawTest(ValueMap payload);
-		void DrawGraph(ValueMap payload);
-		void testVraiGraph(ValueMap payload);
-		
-		//Method of class used to generate the graph 
-	//	void SaveGraph(graphicalImage &myImage,String fileName="temp.png");
-	
-		bool isStringisANumber(String stringNumber);
-		
-	public:
-		
-		Discord_DrawPackage(Upp::String _name, Upp::String _prefix);
-		void Events(ValueMap payload);
-	
-};
 /**********************************************************************
 Project created 20/05/2019
 By Clément Hamon 
@@ -37,6 +13,10 @@ Ultimate++ has BSD license:
 License : https://www.ultimatepp.org/app$ide$About$en-us.html
 Thanks to UPP team !
 **********************************************************************/
+
+using namespace Upp;
+
+
 //Virtual Class, supposed to be inherrited to new graph type
 enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
 enum class LabelValueToShow {XVALUE,YVALUE};
@@ -220,6 +200,9 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void DefineYValueType(ValueTypeEnum _yValue);
 		ValueTypeEnum GetXValueType();
 		ValueTypeEnum GetYValueType();
+		
+		//Example :
+		void SimpleExample();
 };
  
 //this class is here to handle Vector of Dot 
