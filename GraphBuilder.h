@@ -16,8 +16,9 @@ Thanks to UPP team !
 
 using namespace Upp;
 
-
 //Virtual Class, supposed to be inherrited to new graph type
+const Color AllColors[] = {Red(),Green(),Blue(),Yellow(),Magenta(),Brown()};
+
 enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};

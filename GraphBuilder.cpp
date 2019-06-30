@@ -764,7 +764,7 @@ Dot& Courbe::operator[](int iterator){
 }
 
 Dot& Courbe::AddDot(Dot d){
-	dots.Add(d);	
+	return dots.Add(d);	
 }
 
 void Courbe::removeDot(int iterator){
