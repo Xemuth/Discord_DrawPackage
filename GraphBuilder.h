@@ -263,8 +263,8 @@ class Dot : public Upp::Moveable<Dot>{
 	private:
 		int id;
 		Courbe * parent;
-		Value XValue;
-		Value YValue;		
+		Value Xvalue;
+		Value Yvalue;		
 	public:
 		static int objectCount;
 		Value GetXVal();

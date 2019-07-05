@@ -875,19 +875,19 @@ Courbe::~Courbe(){
 // Class Dot
 /***********************************************/
 void Dot::SetXValue(Value _XValue){
-	XValue = _XValue;
+	Xvalue = _XValue;
 }
 
 void Dot::SetYValue(Value _YValue){
-	YValue = _YValue;
+	Yvalue = _YValue;
 }
 
 Value Dot::GetYVal(){
-	return YValue;	
+	return Yvalue;	
 }
 
 Value Dot::GetXVal(){
-	return XValue;
+	return Xvalue;
 }
 
 int Dot::GetId(){
@@ -897,15 +897,15 @@ int Dot::GetId(){
 String Dot::GetInformation(){
 	String information="";
 	information <<"        -----Dot " << String(std::to_string( this->GetId())) <<"-----\n";
-	information << "        X Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetXValueType()) << " Value ->" << XValue.ToString() <<"\n";
-	information << "        Y Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetYValueType()) << " Value ->" << YValue.ToString() <<"\n";
+	information << "        X Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetXValueType()) << " Value ->" << Xvalue.ToString() <<"\n";
+	information << "        Y Value : " << "Type -> "<< ResolveValueTypeEnum( parent->GetYValueType()) << " Value ->" << Yvalue.ToString() <<"\n";
 	return information;
 }
 
 Dot::Dot(Value _XValue,Value _YValue,Courbe* _parent){
 	parent = _parent;
-	XValue = _XValue;
-	YValue = _YValue;
+	Xvalue = _XValue;
+	Yvalue = _YValue;
 	id = objectCount;
 	objectCount++;
 }
