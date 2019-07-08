@@ -100,6 +100,37 @@ void GraphDotCloud::SimpleExample(){
 			//	ptrBot->SendFile(channel,"", newGraph.GetGraphName(), "temp.png");
 }
 
+//checking if string could be a number
+bool isStringisANumber(Upp::String stringNumber){
+	if (std::isdigit(stringNumber[0]) || (stringNumber.GetCount() > 1 && (stringNumber[0] == '+'))){
+        for (int i = 1 ; i < stringNumber.GetCount(); ++i)
+            if (!std::isdigit(stringNumber[i]))
+                return false;
+        return true;
+    }
+    return false;
+}
+//Function to allow Inherance of type from a string
+Value ResolveType(String valueToResolve){
+	if(valueToResolve.GetCount()> 0 && isStringisANumber(valueToResolve)){
+		if(valueToResolve.GetCount() > 9){
+			return Value(std::stoi(valueToResolve.ToStd()));
+		}else if(valueToResolve.Find(",") || valueToResolve.Find(".")){
+			return Value(std::stoi(valueToResolve.ToStd()));
+		}else{
+			return Value(std::stoi(valueToResolve.ToStd()));
+		}
+	}else if(valueToResolve.GetCount()> 0 && ((valueToResolve[0] == 'b' && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1))) || (ToLower(valueToResolve).IsEqual("true") || ToLower(valueToResolve).IsEqual("false")))  ){
+		if(valueToResolve.Find("b")>-1 && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1)) ){
+			valueToResolve.Replace("b","");
+			return Value(((std::stoi(valueToResolve.ToStd())!=0)? true:false));
+		}else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
+			return Value(((valueToResolve.IsEqual("true"))? true:false));
+		}
+	}else{
+		return Value(valueToResolve);
+	}
+}
 
 /***********************************************/
 // Class Graph 
@@ -717,7 +748,6 @@ GraphDotCloud::GraphDotCloud(int _XSize,int _YSize):img(_XSize,_YSize){
 	_sz.cy = _YSize;
 	_sz.cx = _XSize;
 	sz = _sz;
-	;
 }
 GraphDotCloud::GraphDotCloud(int _XSize,int _YSize,String _GraphName):img(_XSize,_YSize){
 	Size _sz;
