@@ -738,6 +738,10 @@ void GraphDotCloud::RemoveCourbe(int i){
 	courbes.Remove(i);	
 }
 
+void GraphDotCloud::ClearData(){
+	courbes.Clear();
+}
+
 Courbe& GraphDotCloud::operator[](int iterator){ //allowing to access to courbe stocked in AllCourbes
 	return courbes[iterator];
 }

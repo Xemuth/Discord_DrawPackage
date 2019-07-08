@@ -159,7 +159,7 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void AddCourbe(Courbe c);
 		void RemoveCourbe(Courbe &c);
 		void RemoveCourbe(int i);
-		
+		void ClearData();
 		Courbe& operator[](int iterator); //allowing to access to courbe stocked in AllCourbes
 		
 		//Bunch of constructor
