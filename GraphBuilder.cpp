@@ -110,7 +110,7 @@ bool isStringisANumber(Upp::String stringNumber){
     }
     return false;
 }
-//Function to allow Inherance of type from a string
+//Function to allow inheritance of type from a string
 Value ResolveType(String valueToResolve){
 	if(valueToResolve.GetCount()> 0 && isStringisANumber(valueToResolve)){
 		if(valueToResolve.GetCount() > 9){
