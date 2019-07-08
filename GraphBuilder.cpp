@@ -462,7 +462,7 @@ const ImageDraw& GraphDotCloud::DrawGraph(){ //Used generate temp.png
 			
 	}
 	
-	DrawTextAlphaFriendly(img,0.02,0.05,version,0,StdFont(GraphFontSize *0.7));
+	DrawTextAlphaFriendly(img,0.03,0.05,version,0,StdFont(GraphFontSize *0.7));
 	return img;
 }
 
