@@ -112,24 +112,24 @@ bool isStringisANumber(Upp::String stringNumber){
 }
 //Function to allow inheritance of type from a string
 Value ResolveType(String valueToResolve){
-	if(valueToResolve.GetCount()> 0 && isStringisANumber(valueToResolve)){
-		if(valueToResolve.GetCount() > 9){
-			return Value(std::stoi(valueToResolve.ToStd()));
-		}else if(valueToResolve.Find(",") || valueToResolve.Find(".")){
-			return Value(std::stoi(valueToResolve.ToStd()));
-		}else{
-			return Value(std::stoi(valueToResolve.ToStd()));
-		}
-	}else if(valueToResolve.GetCount()> 0 && ((valueToResolve[0] == 'b' && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1))) || (ToLower(valueToResolve).IsEqual("true") || ToLower(valueToResolve).IsEqual("false")))  ){
-		if(valueToResolve.Find("b")>-1 && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1)) ){
-			valueToResolve.Replace("b","");
-			return Value(((std::stoi(valueToResolve.ToStd())!=0)? true:false));
-		}else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
-			return Value(((valueToResolve.IsEqual("true"))? true:false));
-		}
-	}else{
-		return Value(valueToResolve);
-	}
+    if(valueToResolve.GetCount()> 0 && isStringisANumber(valueToResolve)){
+        if(valueToResolve.GetCount() > 9){
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }else if(valueToResolve.Find(",") || valueToResolve.Find(".")){
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }else{
+            return Value(std::stoi(valueToResolve.ToStd()));
+        }
+    }else if(valueToResolve.GetCount()> 0 && ((valueToResolve[0] == 'b' && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1))) || (ToLower(valueToResolve).IsEqual("true") || ToLower(valueToResolve).IsEqual("false")))  ){
+        if(valueToResolve.Find("b")>-1 && isStringisANumber(valueToResolve.Right(valueToResolve.GetCount()-1)) ){
+            valueToResolve.Replace("b","");
+            return Value(((std::stoi(valueToResolve.ToStd())!=0)? true:false));
+        }else if(valueToResolve.IsEqual("true") || valueToResolve.IsEqual("false")){
+            return Value(((valueToResolve.IsEqual("true"))? true:false));
+        }
+    }
+    return Value(valueToResolve);
+
 }
 
 /***********************************************/
