@@ -27,7 +27,7 @@ enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
 class Graph{
 	protected:
-		const String version ="version 1.1 : Property Seteur !";
+		const String version ="version 1.2 : Multiple Command Maker !";
 		
 		String graphName=""; //name of graph 
 		String XName=""; //Name of X axis
