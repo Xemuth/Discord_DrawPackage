@@ -5,10 +5,7 @@
 #include <Draw/Draw.h>
 
 #ifdef flagGRAPHBUILDER_DB
-	#ifndef __Plugin_Sqlite3__
-		#include <plugin/sqlite3/Sqlite3.h>
-	#endif
-	
+	#include <plugin/sqlite3/Sqlite3.h>
 	using namespace Upp;
 	#undef MODEl
 	#undef SCHEMADIALECT
@@ -18,19 +15,6 @@
 	#include "Sql/sch_header.h"
 #endif 
 
-
-/*
-
-
-
-using namespace Upp;
-#undef MODEl
-#undef SCHEMADIALECT
-
-#define SCHEMADIALECT <plugin/sqlite3/Sqlite3Schema.h>
-#define MODEL <Discord_Overwatch/Overwatch_DataBase.sch>
-#include "Sql/sch_header.h"
-*/
 
 /**********************************************************************
 Project created 20/05/2019Z
@@ -58,7 +42,7 @@ enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
 class Graph{
 	protected:
-		const String version ="version 1.2 : Multiple Command Maker !";
+		const String version ="version 1.2.2 : Affinage des courbes !";
 		
 		String graphName=""; //name of graph 
 		String XName=""; //Name of X axis

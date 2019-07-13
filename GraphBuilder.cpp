@@ -436,7 +436,7 @@ const ImageDraw& GraphDotCloud::DrawGraph(){ //Used generate temp.png
 					if(resolverY !=-1 && resolverX !=-1){
 						if(c.DotIsShowed())DrawEllispeAlphaFriendly(img,(((xLegend*0.10) + ( paddingAxisX * resolverX))) , (y- ((y*0.10)+(paddingAxisY*resolverY))) ,10,10,c.GetColor());
 						if(!first && c.IsLinked()&& !dontLink)DrawLineAlphaFriendly(img,(((xLegend*0.10) + ( paddingAxisX * resolverX)))+3 , (y- ((y*0.10)+(paddingAxisY*resolverY)))+3,(((xLegend*0.10) + ( paddingAxisX * BufferResolverX)))+3 , (y- ((y*0.10)+(paddingAxisY*BufferResolverY)))+3,this->GetGraphTikeness(),c.GetColor());
-						if(showValueOfDot)DrawTextAlphaFriendly(img,(((xLegend*0.11) +(paddingAxisX * resolverX))),(y- ((y*0.11)+(paddingAxisY*resolverY))),d.GetYVal().ToString(),0,StdFont(GetGraphFontSize() -3).Bold(true));
+						if(showValueOfDot)DrawTextAlphaFriendly(img,(((xLegend*0.10) +(paddingAxisX * resolverX))),(y- ((y*0.118)+(paddingAxisY*resolverY))),d.GetYVal().ToString(),0,StdFont(GetGraphFontSize() -3).Bold(true));
 					}
 					first=false;
 					BufferResolverX =resolverX;
@@ -877,7 +877,7 @@ Dot& Courbe::AddDot(Dot d){
 }
 
 void Courbe::removeDot(int iterator){
-	dots.Remove(iterator);
+	dots.Remove(iterator,1);
 }
 
 void Courbe::removeDot(Dot &dot){
