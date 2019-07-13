@@ -49,3 +49,4 @@ static void All_Tables_GraphBuilder(SqlSchema& schema) {
 #include SCHEMADIALECT
 
 }
+

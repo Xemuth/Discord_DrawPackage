@@ -1,5 +1,6 @@
 #ifndef _GraphBuilder_GraphBuilder_h_
 #define _GraphBuilder_GraphBuilder_h_
+
 #include <CtrlLib/CtrlLib.h>
 #include <Draw/Draw.h>
 
@@ -8,12 +9,31 @@
 		#include <plugin/sqlite3/Sqlite3.h>
 	#endif
 	
-	#define SCHEMADIALECT2 <GraphBuilder/GraphBuilder_SchemaDefinition.h>
-	#define MODEL2 <GraphBuilder/GraphBuilder_DataBase.sch>
+	using namespace Upp;
+	#undef MODEl
+	#undef SCHEMADIALECT
+
+	#define MODEL <GraphBuilder/GraphBuilder_DataBase.sch>
+	#define SCHEMADIALECT  <plugin/sqlite3/Sqlite3Schema.h>
+	#include "Sql/sch_header.h"
 #endif 
 
+
+/*
+
+
+
+using namespace Upp;
+#undef MODEl
+#undef SCHEMADIALECT
+
+#define SCHEMADIALECT <plugin/sqlite3/Sqlite3Schema.h>
+#define MODEL <Discord_Overwatch/Overwatch_DataBase.sch>
+#include "Sql/sch_header.h"
+*/
+
 /**********************************************************************
-Project created 20/05/2019
+Project created 20/05/2019Z
 By Clément Hamon 
 This project have to be used with Ultimate++ FrameWork and required the Core Librairy from it
 http://www.ultimatepp.org
@@ -29,9 +49,7 @@ using namespace Upp;
 Value ResolveType(String valueToResolve);
 bool isStringisANumber(String stringNumber);
 
-#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
-Sqlite3Session sqlite3_GB; //DataBase
-#endif
+
 
 //Virtual Class, supposed to be inherrited to new graph type
 const Color AllColors[] = {Red(),Green(),Blue(),Yellow(),Magenta(),Brown(),Cyan(),LtRed(),LtGreen(),LtYellow,LtBlue(),LtMagenta(),LtCyan()};
@@ -56,6 +74,7 @@ class Graph{
 		bool alphaMode = false;
 		bool showAxisNames =true;
 		bool showGraphName =true;
+		
 	public: 
 		virtual String ToJson()=0;
 		virtual String GetInformation() =0; //Here we force Override in inherited class
@@ -161,6 +180,11 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		
 		//Used to draw
 		void DrawValueOnAxisAlphaFriendly(Draw& img,float X,float Y,float paddingX,float paddingY,bool AlphaCall = false);
+		#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
+			Sqlite3Session sqlite3; //DataBase
+			bool bddLoaded =false;
+			void prepareOrLoadBDD();
+		#endif
 		
 	public:
 		String GetTranslationResult();

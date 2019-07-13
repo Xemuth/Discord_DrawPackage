@@ -3,6 +3,11 @@
 #include <cctype>
 #include <string> 
 
+#ifdef flagGRAPHBUILDER_DB
+	#include <Sql/sch_schema.h>
+	#include <Sql/sch_source.h>
+#endif
+
 #define IMAGECLASS WowImg
 #define IMAGEFILE <GraphBuilder/wow.iml>
 #include <Draw/iml.h>
@@ -754,6 +759,9 @@ GraphDotCloud::GraphDotCloud(int _XSize,int _YSize):img(_XSize,_YSize){
 	_sz.cy = _YSize;
 	_sz.cx = _XSize;
 	sz = _sz;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif
 }
 GraphDotCloud::GraphDotCloud(int _XSize,int _YSize,String _GraphName):img(_XSize,_YSize){
 	Size _sz;
@@ -761,6 +769,9 @@ GraphDotCloud::GraphDotCloud(int _XSize,int _YSize,String _GraphName):img(_XSize
 	_sz.cx = _XSize;
 	sz = _sz;
 	graphName = _GraphName;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif	
 }
 GraphDotCloud::GraphDotCloud(int _XSize,int _YSize,String _GraphName, String _XName, String _YName):img(_XSize,_YSize){
 	Size _sz;
@@ -770,20 +781,33 @@ GraphDotCloud::GraphDotCloud(int _XSize,int _YSize,String _GraphName, String _XN
 	graphName = _GraphName;
 	XName= _XName;
 	YName= _YName;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif
 }
 GraphDotCloud::GraphDotCloud(Size _sz,String _GraphName, String _XName, String _YName):img(_sz.cx,_sz.cy){
 	sz = _sz;
 	graphName = _GraphName;
 	XName= _XName;
 	YName= _YName;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif
 }
 GraphDotCloud::GraphDotCloud(Size _sz,String _GraphName):img(_sz.cx,_sz.cy){
 	sz = _sz;
 	graphName = _GraphName;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif
 }
 GraphDotCloud::GraphDotCloud(Size _sz):img(_sz.cx,_sz.cy){
 	sz = _sz;
+	#ifdef flagGRAPHBUILDER_DB
+		prepareOrLoadBDD();
+	#endif
 }
+
 
 
 #ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
@@ -796,9 +820,41 @@ void GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
 void GraphDotCloud::LoadGraphParamFromBdd(int ID){
 	
 }
+
+void GraphDotCloud::prepareOrLoadBDD(){
+	bddLoaded =false;
+	sqlite3.LogErrors(true);
+	bool mustCreate = false;
+	if(!FileExists("GraphBuilder_DataBase.db"))mustCreate =true;
+	if(sqlite3.Open("GraphBuilder_DataBase.db")) {
+		SQL = sqlite3;
+		if(mustCreate){
+			SqlSchema sch(SQLITE3);
+			All_Tables(sch);
+			
+			if(sch.ScriptChanged(SqlSchema::UPGRADE)){
+				SqlPerformScript(sch.Upgrade());
+			}	
+			if(sch.ScriptChanged(SqlSchema::ATTRIBUTES)){	
+				SqlPerformScript(sch.Attributes());
+			}
+			if(sch.ScriptChanged(SqlSchema::CONFIG)) {
+				SqlPerformScript(sch.ConfigDrop());
+				SqlPerformScript(sch.Config());
+			}
+			sch.SaveNormal();
+			
+		}
+		Sql sql;
+		sql.Execute("PRAGMA foreign_keys = ON;"); //Enable Foreign keys
+		bddLoaded =true;
+	}
+}
+
 #endif
 ValueMap GraphDotCloud::TransformGraphParamToJson(){
 	
+	return ValueMap();
 }
 void GraphDotCloud::BuildGraphParamFromJson(ValueMap Json){
 	
