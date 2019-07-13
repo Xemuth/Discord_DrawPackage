@@ -786,6 +786,23 @@ GraphDotCloud::GraphDotCloud(Size _sz):img(_sz.cx,_sz.cy){
 }
 
 
+#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
+void GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
+	
+}
+void GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
+	
+}
+void GraphDotCloud::LoadGraphParamFromBdd(int ID){
+	
+}
+#endif
+ValueMap GraphDotCloud::TransformGraphParamToJson(){
+	
+}
+void GraphDotCloud::BuildGraphParamFromJson(ValueMap Json){
+	
+}
 
 /***********************************************/
 // Class Courbe 

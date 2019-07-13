@@ -8,6 +8,8 @@ uses
 file
 	GraphBuilder.h,
 	GraphBuilder.cpp,
+	GraphBuilder_DataBase.sch,
+	GraphBuilder_SchemaDefinition.h,
 	wow.iml;
 
 mainconfig

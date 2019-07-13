@@ -2,6 +2,16 @@
 #define _GraphBuilder_GraphBuilder_h_
 #include <CtrlLib/CtrlLib.h>
 #include <Draw/Draw.h>
+
+#ifdef flagGRAPHBUILDER_DB
+	#ifndef __Plugin_Sqlite3__
+		#include <plugin/sqlite3/Sqlite3.h>
+	#endif
+	
+	#define SCHEMADIALECT2 <GraphBuilder/GraphBuilder_SchemaDefinition.h>
+	#define MODEL2 <GraphBuilder/GraphBuilder_DataBase.sch>
+#endif 
+
 /**********************************************************************
 Project created 20/05/2019
 By Clément Hamon 
@@ -19,6 +29,9 @@ using namespace Upp;
 Value ResolveType(String valueToResolve);
 bool isStringisANumber(String stringNumber);
 
+#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
+Sqlite3Session sqlite3_GB; //DataBase
+#endif
 
 //Virtual Class, supposed to be inherrited to new graph type
 const Color AllColors[] = {Red(),Green(),Blue(),Yellow(),Magenta(),Brown(),Cyan(),LtRed(),LtGreen(),LtYellow,LtBlue(),LtMagenta(),LtCyan()};
@@ -206,6 +219,14 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		void DefineYValueType(ValueTypeEnum _yValue);
 		ValueTypeEnum GetXValueType();
 		ValueTypeEnum GetYValueType();
+		
+		#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
+		void SaveGraphParamInBDD(String graphParamName);
+		void LoadGraphParamFromBdd(String graphParamName);
+		void LoadGraphParamFromBdd(int ID);
+		#endif
+		ValueMap TransformGraphParamToJson();
+		void BuildGraphParamFromJson(ValueMap Json);
 		
 		//Example :
 		void SimpleExample();
