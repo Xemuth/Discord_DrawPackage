@@ -529,7 +529,7 @@ bool GraphDotCloud::StartTranslation(){
 		Date dMax = static_cast<Date>(xMax.Get<Date>());
 		Date dMin =  static_cast<Date>(xMin.Get<Date>());
 		dMax++;
-		dMin--;
+	//	dMin--; //Since graphBuilder dont draw the first date from edge of X graph we can delete this line
 		xMax = Value(dMax);
 		xMin = Value(dMin);
 	}
