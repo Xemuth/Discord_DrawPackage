@@ -325,7 +325,7 @@ void GraphDotCloud::DrawValueOnAxisAlphaFriendly(Draw& img,float X,float Y,float
 		//TODO
 	}else if(XValueType == ValueTypeEnum::DATE){
 		int numberOfDays = xMax.Get<Date>() - xMin.Get<Date>();
-		int decrmented = numberOfDays -1; //this used to be on the for loop (defining it before prevent calculation at each iteration)
+		int decrmented = numberOfDays; //this used to be on the for loop (defining it before prevent calculation at each iteration)
 		Date unit= static_cast<Date>( xMin.Get<Date>());
 		for (int e = 0; e < numberOfDays; e++){
 			float x = ResolveX(Value(unit));
