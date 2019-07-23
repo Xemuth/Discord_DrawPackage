@@ -808,17 +808,29 @@ GraphDotCloud::GraphDotCloud(Size _sz):img(_sz.cx,_sz.cy){
 	#endif
 }
 
-
-
 #ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
-void GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
-	
+int GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
+	Sql sql;
+	if(sql*Insert(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM)(GDC_NAME,graphParamName)(GDC_JSON,TransformGraphParamToJson())){
+		LOG(sql);
+		return sql.GetInsertedId().Get<int64>();	
+	}
+	LOG(sql);
+	return -1;
 }
 void GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
-	
+	Sql sql;
+	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_NAME == graphParamName);
+	if(sql.Fetch()){
+		BuildGraphParamFromJson(sql[2]);
+	}
 }
 void GraphDotCloud::LoadGraphParamFromBdd(int ID){
-	
+	Sql sql;
+	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_ID == ID);
+	if(sql.Fetch()){
+		BuildGraphParamFromJson(sql[2]);
+	}
 }
 
 void GraphDotCloud::prepareOrLoadBDD(){
@@ -843,7 +855,6 @@ void GraphDotCloud::prepareOrLoadBDD(){
 				SqlPerformScript(sch.Config());
 			}
 			sch.SaveNormal();
-			
 		}
 		Sql sql;
 		sql.Execute("PRAGMA foreign_keys = ON;"); //Enable Foreign keys
@@ -852,12 +863,41 @@ void GraphDotCloud::prepareOrLoadBDD(){
 }
 
 #endif
-ValueMap GraphDotCloud::TransformGraphParamToJson(){
-	
-	return ValueMap();
+String GraphDotCloud::TransformGraphParamToJson(){
+	Json json;
+    json
+       ("ShowGraphName", this->showGraphName)
+       ("ShowLegendsOfCourbes",this->showLegendsOfCourbes)
+       ("ShowValueOfDot",showValueOfDot)
+       ("ShowValueOnAxis",ValueOnAxis)
+       ("ActivateMaxDatePadding",UseMaxDatePadding)
+       ("SetMaxDatePadding",SpecifiedMaxDatePadding)
+       ("SetActivatedSpecifiedLowestAxisY",IntStartAtLowestSpecifiedNumberAxisY)
+       ("SetSpecifiedLowestStartingNumberAxisY",SpecifiedLowestStartingNumberAxisY)
+       ("SetActivatedSpecifiedHighestAxisY",IntStartAtHighestSpecifiedNumberAxisY)
+       ("SetSpecifiedHighestStartingNumberAxisY",SpecifiedHighestStartingNumberAxisY)
+       ("SignIt",signIt) 
+       ("SetAlphaColor",  Json("red",AlphaColor.GetR())("green",AlphaColor.GetG())("blue",AlphaColor.GetB()))
+       ("SetMainColor",	  Json("red",MainColor.GetR())("green",MainColor.GetG())("blue",MainColor.GetB()));
+       Cout() << json.ToString() <<"\n";
+	return json.ToString();
 }
-void GraphDotCloud::BuildGraphParamFromJson(ValueMap Json){
-	
+
+void GraphDotCloud::BuildGraphParamFromJson(String json){
+	ValueMap map(json);
+	ShowGraphName(map["ShowGraphName"].Get<bool>());
+	ShowLegendsOfCourbes(map["ShowLegendsOfCourbes"].Get<bool>());
+	ShowValueOfDot(map["ShowValueOfDot"].Get<bool>());
+	ShowValueOnAxis(map["ShowValueOnAxis"].Get<bool>());
+	ActivateMaxDatePadding(map["ActivateMaxDatePadding"].Get<bool>());
+	SetMaxDatePadding(map["SetMaxDatePadding"].Get<int>());
+	SetActivatedSpecifiedLowestAxisY(map["SetActivatedSpecifiedLowestAxisY"].Get<bool>());
+	SetSpecifiedLowestStartingNumberAxisY(map["SetSpecifiedLowestStartingNumberAxisY"].Get<int>());
+	SetActivatedSpecifiedHighestAxisY(map["SetActivatedSpecifiedHighestAxisY"].Get<bool>());
+	SetSpecifiedHighestStartingNumberAxisY(map["SetSpecifiedHighestStartingNumberAxisY"].Get<int>());
+	SignIt(map["SignIt"].Get<bool>());
+	SetMainColor(Color(map["SetAlphaColor"]["red"].Get<int>(),map["SetAlphaColor"]["green"].Get<int>(),map["SetAlphaColor"]["blue"].Get<int>()));
+	SetMainColor(Color(map["SetMainColor"]["red"].Get<int>(),map["SetMainColor"]["green"].Get<int>(),map["SetMainColor"]["blue"].Get<int>()));
 }
 
 /***********************************************/

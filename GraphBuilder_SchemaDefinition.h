@@ -44,7 +44,7 @@ void TABLE_##x(SqlSchema& schema) { schema.Table(#x); SCHEMA_##x(schema); schema
 #define CONFIG(x, d)                                        schema.Config(x, d);
 #define UPGRADE(x)                                          schema.Upgrade(x);
 
-static void All_Tables_GraphBuilder(SqlSchema& schema) {
+static void All_Tables(SqlSchema& schema) {
 
 #include SCHEMADIALECT
 

@@ -15,7 +15,6 @@
 	#include "Sql/sch_header.h"
 #endif 
 
-
 /**********************************************************************
 Project created 20/05/2019Z
 By Clément Hamon 
@@ -229,12 +228,12 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		ValueTypeEnum GetYValueType();
 		
 		#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
-		void SaveGraphParamInBDD(String graphParamName);
+		int SaveGraphParamInBDD(String graphParamName);
 		void LoadGraphParamFromBdd(String graphParamName);
 		void LoadGraphParamFromBdd(int ID);
 		#endif
-		ValueMap TransformGraphParamToJson();
-		void BuildGraphParamFromJson(ValueMap Json);
+		String TransformGraphParamToJson();
+		void BuildGraphParamFromJson(String json);
 		
 		//Example :
 		void SimpleExample();
