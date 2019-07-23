@@ -431,6 +431,7 @@ const ImageDraw& GraphDotCloud::DrawGraph(){ //Used generate temp.png
 			
 			for(Dot d : c.GetDots()){
 				if(!OutThePerimeterX(d.GetXVal()) && !OutThePerimeterY(d.GetYVal())){
+					Cout() << "Valeur dote : " << d.GetXVal().ToString() <<"\n";
 					float resolverX = ResolveX(d.GetXVal());
 					float resolverY = ResolveY(d.GetYVal());
 					if(resolverY !=-1 && resolverX !=-1){
@@ -508,6 +509,12 @@ bool GraphDotCloud::StartTranslation(){
 				}
 			}
 		}
+	}
+	if(UseMaxDatePadding){
+		Date dMax = GetSysDate();
+		Date dMin = dMax-SpecifiedMaxDatePadding;
+		xMax=Value(dMax);
+		xMin=Value(dMin);	
 	}
 	TranslationDone = (!yMax.IsVoid() && !xMax.IsVoid() && !xMin.IsVoid() && !yMin.IsVoid());
 	Cout() << "Translation Result : " << TranslationDone <<"\n";
@@ -655,7 +662,9 @@ float GraphDotCloud::ResolveX(Value xToResolve){
 			}
 			return -1;
 		}else if(XValueType == ValueTypeEnum::DATE){
+			
 			if(!OutThePerimeterX(xToResolve)){
+				Cout() << xToResolve.ToString() <<"\n";
 				float padding =  GetXPadding().Get<int>();
 				padding++;
 				float result = (padding -( GetHighestValueX().Get<Date>().Get() - xToResolve.Get<Date>().Get()))/padding;
