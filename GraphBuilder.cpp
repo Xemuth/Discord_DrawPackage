@@ -819,7 +819,7 @@ GraphDotCloud::GraphDotCloud(Size _sz):img(_sz.cx,_sz.cy){
 
 #ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
 int GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
-	Sql sql;
+	Sql sql(sqlite3);
 	if(sql*Insert(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM)(GDC_NAME,graphParamName)(GDC_JSON,TransformGraphParamToJson())){
 		LOG(sql);
 		return sql.GetInsertedId().Get<int64>();	
@@ -828,14 +828,14 @@ int GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
 	return -1;
 }
 void GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
-	Sql sql;
+	Sql sql(sqlite3);
 	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_NAME == graphParamName);
 	if(sql.Fetch()){
 		BuildGraphParamFromJson(sql[2]);
 	}
 }
 void GraphDotCloud::LoadGraphParamFromBdd(int ID){
-	Sql sql;
+	Sql sql(sqlite3);
 	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_ID == ID);
 	if(sql.Fetch()){
 		BuildGraphParamFromJson(sql[2]);
@@ -848,28 +848,30 @@ void GraphDotCloud::prepareOrLoadBDD(){
 	bool mustCreate = false;
 	if(!FileExists("GraphBuilder_DataBase.db"))mustCreate =true;
 	if(sqlite3.Open("GraphBuilder_DataBase.db")) {
-		SQL = sqlite3;
+	//	SQL = sqlite3;
 		if(mustCreate){
-			SqlSchema sch(SQLITE3);
-			All_Tables(sch);
+			SqlSchema sch_GB(SQLITE3);
+			All_Tables(sch_GB);
 			
-			if(sch.ScriptChanged(SqlSchema::UPGRADE)){
-				SqlPerformScript(sch.Upgrade());
+			if(sch_GB.ScriptChanged(SqlSchema::UPGRADE)){
+				SqlPerformScript(sch_GB.Upgrade());
 			}	
-			if(sch.ScriptChanged(SqlSchema::ATTRIBUTES)){	
-				SqlPerformScript(sch.Attributes());
+			if(sch_GB.ScriptChanged(SqlSchema::ATTRIBUTES)){	
+				SqlPerformScript(sch_GB.Attributes());
 			}
-			if(sch.ScriptChanged(SqlSchema::CONFIG)) {
-				SqlPerformScript(sch.ConfigDrop());
-				SqlPerformScript(sch.Config());
+			if(sch_GB.ScriptChanged(SqlSchema::CONFIG)) {
+				SqlPerformScript(sch_GB.ConfigDrop());
+				SqlPerformScript(sch_GB.Config());
 			}
-			sch.SaveNormal();
+			sch_GB.SaveNormal();
 		}
-		Sql sql;
+		Sql sql(sqlite3);
 		sql.Execute("PRAGMA foreign_keys = ON;"); //Enable Foreign keys
 		bddLoaded =true;
 	}
+	#undef MODEL
 }
+
 
 #endif
 String GraphDotCloud::TransformGraphParamToJson(){
@@ -893,20 +895,20 @@ String GraphDotCloud::TransformGraphParamToJson(){
 }
 
 void GraphDotCloud::BuildGraphParamFromJson(String json){
-	ValueMap map(json);
+	ValueMap map= ParseJSON(json);
 	ShowGraphName(map["ShowGraphName"].Get<bool>());
 	ShowLegendsOfCourbes(map["ShowLegendsOfCourbes"].Get<bool>());
 	ShowValueOfDot(map["ShowValueOfDot"].Get<bool>());
 	ShowValueOnAxis(map["ShowValueOnAxis"].Get<bool>());
 	ActivateMaxDatePadding(map["ActivateMaxDatePadding"].Get<bool>());
-	SetMaxDatePadding(map["SetMaxDatePadding"].Get<int>());
+	SetMaxDatePadding(map["SetMaxDatePadding"].Get<double>());
 	SetActivatedSpecifiedLowestAxisY(map["SetActivatedSpecifiedLowestAxisY"].Get<bool>());
-	SetSpecifiedLowestStartingNumberAxisY(map["SetSpecifiedLowestStartingNumberAxisY"].Get<int>());
+	SetSpecifiedLowestStartingNumberAxisY(map["SetSpecifiedLowestStartingNumberAxisY"].Get<double>());
 	SetActivatedSpecifiedHighestAxisY(map["SetActivatedSpecifiedHighestAxisY"].Get<bool>());
-	SetSpecifiedHighestStartingNumberAxisY(map["SetSpecifiedHighestStartingNumberAxisY"].Get<int>());
+	SetSpecifiedHighestStartingNumberAxisY(map["SetSpecifiedHighestStartingNumberAxisY"].Get<double>());
 	SignIt(map["SignIt"].Get<bool>());
-	SetMainColor(Color(map["SetAlphaColor"]["red"].Get<int>(),map["SetAlphaColor"]["green"].Get<int>(),map["SetAlphaColor"]["blue"].Get<int>()));
-	SetMainColor(Color(map["SetMainColor"]["red"].Get<int>(),map["SetMainColor"]["green"].Get<int>(),map["SetMainColor"]["blue"].Get<int>()));
+	SetMainColor(Color(map["SetAlphaColor"]["red"].Get<double>(),map["SetAlphaColor"]["green"].Get<double>(),map["SetAlphaColor"]["blue"].Get<double>()));
+	SetMainColor(Color(map["SetMainColor"]["red"].Get<double>(),map["SetMainColor"]["green"].Get<double>(),map["SetMainColor"]["blue"].Get<double>()));
 }
 
 /***********************************************/

@@ -5,10 +5,9 @@
 #include <Draw/Draw.h>
 
 #ifdef flagGRAPHBUILDER_DB
+	#define NOAPPSQL
 	#include <plugin/sqlite3/Sqlite3.h>
 	using namespace Upp;
-	#undef MODEl
-	#undef SCHEMADIALECT
 
 	#define MODEL <GraphBuilder/GraphBuilder_DataBase.sch>
 	#define SCHEMADIALECT  <plugin/sqlite3/Sqlite3Schema.h>
@@ -32,13 +31,12 @@ using namespace Upp;
 Value ResolveType(String valueToResolve);
 bool isStringisANumber(String stringNumber);
 
-
-
 //Virtual Class, supposed to be inherrited to new graph type
 const Color AllColors[] = {Red(),Green(),Blue(),Yellow(),Magenta(),Brown(),Cyan(),LtRed(),LtGreen(),LtYellow,LtBlue(),LtMagenta(),LtCyan()};
 enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
+
 class Graph{
 	protected:
 		const String version ="version 1.2.2 : Affinage des courbes !";
