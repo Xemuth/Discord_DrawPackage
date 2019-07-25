@@ -827,18 +827,24 @@ int GraphDotCloud::SaveGraphParamInBDD(String graphParamName){
 	LOG(sql);
 	return -1;
 }
-void GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
+bool  GraphDotCloud::LoadGraphParamFromBdd(String graphParamName){
 	Sql sql(sqlite3);
 	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_NAME == graphParamName);
 	if(sql.Fetch()){
 		BuildGraphParamFromJson(sql[2]);
+		return true;
+	}else{
+		return false;
 	}
 }
-void GraphDotCloud::LoadGraphParamFromBdd(int ID){
+bool GraphDotCloud::LoadGraphParamFromBdd(int ID){
 	Sql sql(sqlite3);
 	sql*Select(SqlAll()).From(GRAPHBUILDER_GRAPHDOTCLOUD_PARAM).Where(GDC_ID == ID);
 	if(sql.Fetch()){
 		BuildGraphParamFromJson(sql[2]);
+		return true;
+	}else{
+		return false;
 	}
 }
 

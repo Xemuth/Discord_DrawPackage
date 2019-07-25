@@ -39,7 +39,7 @@ enum class ValueTypeEnum{INT,DATE};
 
 class Graph{
 	protected:
-		const String version ="version 1.2.2 : Affinage des courbes !";
+		const String version ="version 1.3: Double BDD et Jolies fonctions !";
 		
 		String graphName=""; //name of graph 
 		String XName=""; //Name of X axis
@@ -227,8 +227,8 @@ class GraphDotCloud : public Graph, public Upp::Moveable<GraphDotCloud>{
 		
 		#ifdef flagGRAPHBUILDER_DB //Flag must be define to activate all DB func
 		int SaveGraphParamInBDD(String graphParamName);
-		void LoadGraphParamFromBdd(String graphParamName);
-		void LoadGraphParamFromBdd(int ID);
+		bool LoadGraphParamFromBdd(String graphParamName);
+		bool LoadGraphParamFromBdd(int ID);
 		#endif
 		String TransformGraphParamToJson();
 		void BuildGraphParamFromJson(String json);
