@@ -58,9 +58,9 @@ class Graph{
 		bool showAxisNames =true;
 		bool showGraphName =true;
 
-		Color GenerateColor();
-		
 	public: 
+		Color GenerateColor();
+	
 		virtual String ToJson()=0;
 		virtual String GetInformation() =0; //Here we force Override in inherited class
 											//This func used to print information about the
