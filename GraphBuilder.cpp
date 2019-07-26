@@ -906,6 +906,7 @@ String GraphDotCloud::TransformGraphParamToJson(){
 
 void GraphDotCloud::BuildGraphParamFromJson(String json){
 	ValueMap map= ParseJSON(json);
+	
 	ShowGraphName(map["ShowGraphName"].Get<bool>());
 	ShowLegendsOfCourbes(map["ShowLegendsOfCourbes"].Get<bool>());
 	ShowValueOfDot(map["ShowValueOfDot"].Get<bool>());
