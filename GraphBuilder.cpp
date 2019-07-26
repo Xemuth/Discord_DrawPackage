@@ -162,6 +162,10 @@ Color Graph::GetAlphaColor(){return AlphaColor;}
 void Graph::SetMainColor(Color _MainColor){MainColor = _MainColor;}
 void Graph::SetAlphaColor(Color _AlphaColor){AlphaColor = _AlphaColor;}
 
+Color Graph::GenerateColor(){	
+	return Color((int(Randomf()*180.+50.)),(int(Randomf()*180.+50.)),(int(Randomf()*180.+50.)));
+}
+
 String Graph::GetInformation(){
 	String information="";
 

@@ -33,6 +33,8 @@ bool isStringisANumber(String stringNumber);
 
 //Virtual Class, supposed to be inherrited to new graph type
 const Color AllColors[] = {Red(),Green(),Blue(),Yellow(),Magenta(),Brown(),Cyan(),LtRed(),LtGreen(),LtYellow,LtBlue(),LtMagenta(),LtCyan()};
+//I shoudl do soemthing to generate random color
+
 enum class DirectionLabel{HAUT=0,BAS=1,GAUCHE=2,DROITE=3};
 enum class LabelValueToShow {XVALUE,YVALUE};
 enum class ValueTypeEnum{INT,DATE};
@@ -55,6 +57,8 @@ class Graph{
 		bool alphaMode = false;
 		bool showAxisNames =true;
 		bool showGraphName =true;
+
+		Color GenerateColor();
 		
 	public: 
 		virtual String ToJson()=0;
