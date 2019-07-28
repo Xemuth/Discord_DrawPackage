@@ -283,8 +283,8 @@ class Courbe : public Upp::Moveable<Courbe>{
 		void ShowDot(bool b);
 		bool DotIsShowed();
 		
-		ValueTypeEnum GetXValueType();
-		ValueTypeEnum GetYValueType();
+		ValueTypeEnum GetXValueType()const ;
+		ValueTypeEnum GetYValueType()const ;
 		//Bunch of constructor
 		Courbe(const Courbe& c);
 		Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueType,Color _color);

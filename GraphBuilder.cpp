@@ -495,6 +495,8 @@ ValueTypeEnum GraphDotCloud::GetYValueType(){
 
 bool GraphDotCloud::StartTranslation(){
 	for(Courbe &c : this->courbes){
+		Cout() << (int)XValueType << " || " <<(int)YValueType <<"\n";
+		Cout() << (int) c.GetXValueType()  << " || " << (int)c.GetYValueType() <<"\n";
 		if (c.GetXValueType() == XValueType && c.GetYValueType() == YValueType){
 			for(Dot d : c.GetDots()){
 				if(XValueType == ValueTypeEnum::INT){
@@ -987,10 +989,10 @@ Color const Courbe::GetColor() const{
 	return this->color;
 }
 
-ValueTypeEnum Courbe::GetXValueType(){
+ValueTypeEnum Courbe::GetXValueType()const {
 	return XValueType;
 }
-ValueTypeEnum Courbe::GetYValueType(){
+ValueTypeEnum Courbe::GetYValueType()const {
 	return YValueType;
 }
 
@@ -1010,6 +1012,8 @@ bool Courbe::DotIsShowed(){
 Courbe::Courbe(const Courbe& c){
 	this->id = objectCount;
 	objectCount++;
+	this->XValueType = c.GetXValueType();
+	this->YValueType = c.GetYValueType();
 	this->name = c.GetName();
 	this->color =c.GetColor();
 	this->dots = Vector<Dot>(c.GetDots(),c.GetDots().GetCount());
@@ -1020,6 +1024,7 @@ Courbe::Courbe(String _Name, ValueTypeEnum _XValueType, ValueTypeEnum _YValueTyp
 	this->XValueType = _XValueType;
 	this->YValueType = _YValueType;
 	this->color = _color;
+	Cout() << (int) XValueType<<"\n";
 	id = objectCount;
 	objectCount++;
 }
