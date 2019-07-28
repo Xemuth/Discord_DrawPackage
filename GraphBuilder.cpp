@@ -516,7 +516,7 @@ bool GraphDotCloud::StartTranslation(){
 			}
 		}
 	}
-	if(UseMaxDatePadding){
+	if(UseMaxDatePadding && XValueType == ValueTypeEnum::DATE){
 		Date dMax = GetSysDate();
 		Date dMin = dMax-SpecifiedMaxDatePadding;
 		xMax=Value(dMax);
