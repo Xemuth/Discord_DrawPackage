@@ -41,7 +41,7 @@ enum class ValueTypeEnum{INT,DATE};
 
 class Graph{
 	protected:
-		const String version ="version 1.3: Double BDD et Jolies fonctions !";
+		const String version ="version 1.4: Auto Updater !";
 		
 		String graphName=""; //name of graph 
 		String XName=""; //Name of X axis
