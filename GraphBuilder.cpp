@@ -866,14 +866,14 @@ void GraphDotCloud::prepareOrLoadBDD(){
 			All_Tables(sch_GB);
 			
 			if(sch_GB.ScriptChanged(SqlSchema::UPGRADE)){
-				SqlPerformScript(sch_GB.Upgrade());
+				SqlPerformScript(sqlite3, sch_GB.Upgrade());
 			}	
 			if(sch_GB.ScriptChanged(SqlSchema::ATTRIBUTES)){	
-				SqlPerformScript(sch_GB.Attributes());
+				SqlPerformScript(sqlite3,sch_GB.Attributes());
 			}
 			if(sch_GB.ScriptChanged(SqlSchema::CONFIG)) {
-				SqlPerformScript(sch_GB.ConfigDrop());
-				SqlPerformScript(sch_GB.Config());
+				SqlPerformScript(sqlite3,sch_GB.ConfigDrop());
+				SqlPerformScript(sqlite3,sch_GB.Config());
 			}
 			sch_GB.SaveNormal();
 		}
